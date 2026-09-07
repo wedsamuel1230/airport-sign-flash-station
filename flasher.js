@@ -1,6 +1,7 @@
 import { ESPLoader, Transport } from 'https://cdn.jsdelivr.net/npm/esptool-js@0.5.6/+esm';
 const $=s=>document.querySelector(s),fileInput=$('#flashFile'),button=$('#serialFlash'),choosePort=$('#choosePort'),log=$('#flashLog'),state=$('#deviceState'),next=$('#nextBoard'),erase=$('#eraseProgress'),write=$('#writeProgress');
 let selectedFile=null,port=null,transport=null,loader=null;
+next.hidden=true;
 const say=m=>{log.textContent=m},pct=(bar,label,n)=>{bar.value=n;$(label).textContent=`${n}%`};
 const showFile=f=>{selectedFile=f;$('#fileName').textContent=f.name;$('#fileMeta').textContent=`${(f.size/1024/1024).toFixed(2)} MB · ready to flash`};
 fileInput.onchange=()=>{if(fileInput.files[0])showFile(fileInput.files[0])};$('#chooseAnother').onclick=()=>fileInput.click();
