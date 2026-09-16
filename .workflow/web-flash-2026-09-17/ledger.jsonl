@@ -1,0 +1,5 @@
+{"event":"run_started","phase":"preflight","result":"baseline checkpoint recorded before mutation","approval_ref":"current user request","at":"2026-09-17T00:00:00+08:00"}
+{"event":"root_cause_found","phase":"preflight","result":"index.html assigns flashFile.onchange after flasher.js and overwrites the handler that stores selectedFile; manual file choice still flashes the stale bundled image","at":"2026-09-17T00:00:01+08:00"}
+{"event":"package_gap_found","phase":"preflight","result":"page performs full erase but writes only the image at 0x0; current firmware requires FATFS assets at 0x820000, so erase removes the font assets and never restores them","at":"2026-09-17T00:00:02+08:00"}
+{"event":"implementation_verified","phase":"local-verification","result":"5 flasher tests pass; package hashes and offsets match; syntax and diff checks pass","at":"2026-09-17T00:48:00+08:00"}
+{"event":"commit_barrier","phase":"device-execution","result":"pre-change Git checkpoint is available; package integrity is verified; user authorization covers full erase and webpage flash; proceeding to connected hardware","at":"2026-09-17T00:48:01+08:00"}

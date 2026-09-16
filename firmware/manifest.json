@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "package": "Hong Kong Airport Display",
+  "target": "esp32s3",
+  "flashSize": "16MB",
+  "flashMode": "dio",
+  "flashFreq": "80m",
+  "generatedAt": "2026-09-17T00:00:00+08:00",
+  "segments": [
+    {
+      "name": "Boot and application",
+      "path": "firmware/airport-display.bin",
+      "address": 0,
+      "size": 1674992,
+      "sha256": "78b35bd075435d7fca9938752d51fa51a85b413401c8a5216f8b2a190978db67",
+      "allowLocalOverride": true
+    },
+    {
+      "name": "Chinese font assets",
+      "path": "firmware/assets.bin",
+      "address": 8519680,
+      "size": 8257536,
+      "sha256": "1654adac294f9201c93aae7e4146bdd23258d704e67a07d886997453c757335e"
+    }
+  ]
+}

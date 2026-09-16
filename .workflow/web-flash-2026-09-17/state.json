@@ -1,0 +1,58 @@
+{
+  "run_id": "web-flash-2026-09-17",
+  "goal": "Fix the recurring GitHub Pages Web Serial upload failure and flash the connected ESP32-S3 display from the webpage with the current firmware and font assets.",
+  "phase": "device-execution",
+  "active_node": "browser-web-serial-flash",
+  "status": "active",
+  "success_gates": [
+    "The page no longer loses the selected firmware when the file input handler changes.",
+    "The bundled package writes the boot/application image at 0x0 and the FATFS assets image at 0x820000 after a full erase.",
+    "Connection cleanup and retry leave the page able to make another attempt without a reload.",
+    "A browser Web Serial run reaches erase 100%, write 100%, hard reset, and a visible success state on the connected board.",
+    "The device re-enumerates or emits boot evidence after the browser flash.",
+    "The deployed GitHub Pages site serves the verified flasher and matching firmware manifest.",
+    "An independent review finds no unresolved completion-critical defect."
+  ],
+  "constraints": [
+    "Use the webpage for the actual erase and flash; CLI flashing is prohibited.",
+    "Preserve the ESP32-S3 partition offset for assets at 0x820000.",
+    "Do not change unrelated firmware or site behavior.",
+    "Do not claim physical success from build or HTTP checks alone."
+  ],
+  "editable_surface": [
+    "index.html",
+    "flasher.js",
+    "style.css",
+    "README.md",
+    "firmware/*",
+    "tests/*",
+    ".workflow/web-flash-2026-09-17/*"
+  ],
+  "protected_assets": [
+    "../esp-idf-mvp/main/*",
+    "../esp-idf-mvp/partitions.csv"
+  ],
+  "effect_policy": {
+    "local_edits": "allowed",
+    "build": "allowed",
+    "device_full_erase_and_flash": "authorized by the current user request",
+    "repository_push": "authorized by the request to fix the GitHub Pages flasher completely",
+    "approval_ref": "User: use the webpage to upload and flash the program to the screen; do it all on your own."
+  },
+  "rollback": {
+    "site": "Restore tracked files from the pre-run Git commit.",
+    "device": "Reflash the prior tracked firmware image; erased runtime settings cannot be recovered."
+  },
+  "limits": {
+    "max_repair_cycles": 3,
+    "max_attempts_per_browser_stage": 2,
+    "stop_on_hardware_disconnect": true
+  },
+  "evidence": [
+    "ESP-IDF merge-bin produced a 1674992-byte image for offset 0x0.",
+    "FATFS build produced an 8257536-byte assets image for offset 0x820000.",
+    "Five deterministic flasher tests pass, including hashes, offsets, progress, and single ownership of file selection.",
+    "Local HTTP checks serve the page, manifest, and complete assets file; esptool-js 0.6.1 CDN responds successfully."
+  ],
+  "updated_at": "2026-09-17T00:48:00+08:00"
+}

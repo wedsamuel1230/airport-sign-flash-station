@@ -1,0 +1,14 @@
+{
+  "run_id": "web-flash-2026-09-17",
+  "git_head": "4751192",
+  "clean_worktree": true,
+  "pre_change_sha256": {
+    "index.html": "c5584cb14127c38d5057ed83d11ca07bad4ab6d41098d07992c3dde2339746dd",
+    "flasher.js": "4f2bc1e2e00b881f72c05b11157819a6f93d090babcaf69e77a65a5f040d6990",
+    "README.md": "e0cde0a356dedad9848968b8517417b2fe9bbb15d78427e26c6897bebf77f2d5",
+    "firmware/airport-display.bin": "39ee3e1975ba8238fabc08091fbe08ee5db7df501d551189feea88f4f369feaf"
+  },
+  "connected_serial_device": "/dev/cu.usbmodem11101",
+  "rollback_source": "git HEAD",
+  "created_at": "2026-09-17T00:00:00+08:00"
+}
