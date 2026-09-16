@@ -88,7 +88,13 @@ async function closeTransport({ forgetPort = false } = {}) {
 
 async function requestPort() {
   if (!('serial' in navigator)) throw new Error('Web Serial is unavailable. Use current Chrome or Edge over HTTPS.');
-  if (!port) port = await navigator.serial.requestPort();
+  if (!port) {
+    const grantedPorts = await navigator.serial.getPorts();
+    const espressifPorts = grantedPorts.filter((candidate) => candidate.getInfo().usbVendorId === 0x303a);
+    if (espressifPorts.length === 1) port = espressifPorts[0];
+    else if (grantedPorts.length === 1) port = grantedPorts[0];
+    else port = await navigator.serial.requestPort();
+  }
   const info = port.getInfo();
   const usbId = info.usbVendorId
     ? `${info.usbVendorId.toString(16).padStart(4, '0')}:${(info.usbProductId || 0).toString(16).padStart(4, '0')}`

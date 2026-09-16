@@ -40,6 +40,12 @@ test('page has one owner for firmware file selection', async () => {
   assert.match(flasher, /flashFile.*addEventListener|fileInput\.addEventListener/s);
 });
 
+test('flasher reuses an already granted Web Serial port', async () => {
+  const flasher = await readFile(new URL('flasher.js', root), 'utf8');
+  assert.match(flasher, /navigator\.serial\.getPorts\(\)/);
+  assert.match(flasher, /usbVendorId === 0x303a/);
+});
+
 test('manifest rejects packages that would omit the font partition', () => {
   assert.throws(
     () => validateManifest({ ...manifest, segments: manifest.segments.slice(0, 1) }),

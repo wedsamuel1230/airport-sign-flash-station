@@ -6,7 +6,7 @@ Static GitHub Pages UI for provisioning ESP32-S3 airport signs over USB with Web
 
 1. Open the site in a current Chrome or Edge browser over HTTPS.
 2. Connect one board by USB. Close serial monitors and other programs using the port.
-3. Click **Choose USB port** and select the ESP32-S3 USB JTAG/serial device.
+3. Click **Choose USB port**. The page reuses a previously approved ESP32-S3 port, or asks you to select the USB JTAG/serial device once.
 4. Click **Erase and flash complete package**.
 5. Wait for full erase and combined write to reach 100%. The green completion panel appears only after both images are verified and the board reset is requested.
 
