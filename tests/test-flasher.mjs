@@ -46,6 +46,15 @@ test('flasher reuses an already granted Web Serial port', async () => {
   assert.match(flasher, /usbVendorId === 0x303a/);
 });
 
+test('deployed module URLs are versioned together to avoid stale browser code', async () => {
+  const html = await readFile(new URL('index.html', root), 'utf8');
+  const flasher = await readFile(new URL('flasher.js', root), 'utf8');
+  const pageVersion = html.match(/flasher\.js\?v=([^"']+)/)?.[1];
+  const coreVersion = flasher.match(/flasher-core\.js\?v=([^"']+)/)?.[1];
+  assert.ok(pageVersion);
+  assert.equal(coreVersion, pageVersion);
+});
+
 test('manifest rejects packages that would omit the font partition', () => {
   assert.throws(
     () => validateManifest({ ...manifest, segments: manifest.segments.slice(0, 1) }),

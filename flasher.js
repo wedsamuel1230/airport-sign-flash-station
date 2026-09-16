@@ -1,5 +1,5 @@
 import { ESPLoader, Transport } from 'https://cdn.jsdelivr.net/npm/esptool-js@0.6.1/+esm';
-import { overallWriteProgress, validateManifest } from './flasher-core.js';
+import { overallWriteProgress, validateManifest } from './flasher-core.js?v=20260917-2';
 
 const $ = (selector) => document.querySelector(selector);
 const fileInput = $('#flashFile');
