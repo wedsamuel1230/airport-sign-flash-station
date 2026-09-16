@@ -1,9 +1,9 @@
 {
   "run_id": "web-flash-2026-09-17",
   "goal": "Fix the recurring GitHub Pages Web Serial upload failure and flash the connected ESP32-S3 display from the webpage with the current firmware and font assets.",
-  "phase": "device-execution",
-  "active_node": "browser-web-serial-flash",
-  "status": "active",
+  "phase": "complete",
+  "active_node": null,
+  "status": "complete",
   "success_gates": [
     "The page no longer loses the selected firmware when the file input handler changes.",
     "The bundled package writes the boot/application image at 0x0 and the FATFS assets image at 0x820000 after a full erase.",
@@ -52,7 +52,11 @@
     "ESP-IDF merge-bin produced a 1674992-byte image for offset 0x0.",
     "FATFS build produced an 8257536-byte assets image for offset 0x820000.",
     "Five deterministic flasher tests pass, including hashes, offsets, progress, and single ownership of file selection.",
-    "Local HTTP checks serve the page, manifest, and complete assets file; esptool-js 0.6.1 CDN responds successfully."
+    "Local HTTP checks serve the page, manifest, and complete assets file; esptool-js 0.6.1 CDN responds successfully.",
+    "GitHub Pages deployment 35125819077 completed successfully from commit 861707a.",
+    "The deployed page reused the granted Espressif 303a:1001 port and detected ESP32-S3 QFN56 revision 0.2.",
+    "The webpage reached full erase 100%, combined write 100%, both-image verification, and hard reset with no page errors.",
+    "The USB JTAG/serial device re-enumerated at /dev/cu.usbmodem11101 after reset."
   ],
-  "updated_at": "2026-09-17T00:48:00+08:00"
+  "updated_at": "2026-09-17T01:06:00+08:00"
 }
