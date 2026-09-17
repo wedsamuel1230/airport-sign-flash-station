@@ -4,7 +4,7 @@ import {
   overallWriteProgress,
   runWithConcurrency,
   validateManifest,
-} from './flasher-core.js?v=20260917-4';
+} from './flasher-core.js?v=20260917-5';
 
 const $ = (selector) => document.querySelector(selector);
 const fileInput = $('#flashFile');

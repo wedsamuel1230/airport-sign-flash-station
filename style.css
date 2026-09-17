@@ -148,12 +148,15 @@ footer {
 }
 
 .board-status::before {
+  flex: 0 0 auto;
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: currentColor;
   content: "";
 }
+
+.board-status { gap: 7px; }
 
 .board-row[data-state="ready"] .board-status {
   border-color: color-mix(in srgb, var(--state-ready) 55%, var(--border));
