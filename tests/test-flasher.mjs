@@ -103,6 +103,14 @@ test('deployed module URLs are versioned together to avoid stale browser code', 
   assert.equal(coreVersion, pageVersion);
 });
 
+test('each active device state has a distinct status color', async () => {
+  const css = await readFile(new URL('style.css', root), 'utf8');
+  for (const state of ['ready', 'queued', 'connecting', 'erasing', 'writing', 'resetting', 'complete', 'failed', 'disconnected']) {
+    assert.match(css, new RegExp(`data-state=["']${state}["']`), state);
+  }
+  assert.match(css, /\.board-status::before/);
+});
+
 test('manifest rejects packages that would omit the font partition', () => {
   assert.throws(
     () => validateManifest({ ...manifest, segments: manifest.segments.slice(0, 1) }),

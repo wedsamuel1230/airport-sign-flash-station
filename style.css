@@ -21,6 +21,18 @@
   --danger: #a33a42;
   --danger-bg: #fae8e9;
   --warning: #8c6411;
+  --state-ready: #245e9e;
+  --state-ready-bg: #e4eef9;
+  --state-queued: #68528f;
+  --state-queued-bg: #f0ebf8;
+  --state-connecting: #087989;
+  --state-connecting-bg: #e0f4f6;
+  --state-erasing: #b55a18;
+  --state-erasing-bg: #faeadc;
+  --state-writing: #8a6500;
+  --state-writing-bg: #fff1c6;
+  --state-resetting: #6557bb;
+  --state-resetting-bg: #eceafe;
   --shadow: 0 24px 64px rgba(31, 52, 74, .11);
   --radius: 12px;
 }
@@ -133,6 +145,50 @@ footer {
   font-size: .72rem;
   font-weight: 800;
   letter-spacing: .02em;
+}
+
+.board-status::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  content: "";
+}
+
+.board-row[data-state="ready"] .board-status {
+  border-color: color-mix(in srgb, var(--state-ready) 55%, var(--border));
+  background: var(--state-ready-bg);
+  color: var(--state-ready);
+}
+
+.board-row[data-state="queued"] .board-status {
+  border-color: color-mix(in srgb, var(--state-queued) 55%, var(--border));
+  background: var(--state-queued-bg);
+  color: var(--state-queued);
+}
+
+.board-row[data-state="connecting"] .board-status {
+  border-color: color-mix(in srgb, var(--state-connecting) 55%, var(--border));
+  background: var(--state-connecting-bg);
+  color: var(--state-connecting);
+}
+
+.board-row[data-state="erasing"] .board-status {
+  border-color: color-mix(in srgb, var(--state-erasing) 55%, var(--border));
+  background: var(--state-erasing-bg);
+  color: var(--state-erasing);
+}
+
+.board-row[data-state="writing"] .board-status {
+  border-color: color-mix(in srgb, var(--state-writing) 55%, var(--border));
+  background: var(--state-writing-bg);
+  color: var(--state-writing);
+}
+
+.board-row[data-state="resetting"] .board-status {
+  border-color: color-mix(in srgb, var(--state-resetting) 55%, var(--border));
+  background: var(--state-resetting-bg);
+  color: var(--state-resetting);
 }
 
 .status-chip[data-state="ready"],
@@ -340,6 +396,18 @@ a { color: var(--ink); font-weight: 800; text-underline-offset: 3px; }
     --danger: #ff9aa0;
     --danger-bg: #3d1e23;
     --warning: #d9ae40;
+    --state-ready: #82b8f4;
+    --state-ready-bg: #172e49;
+    --state-queued: #c7acf0;
+    --state-queued-bg: #2d2442;
+    --state-connecting: #6fd4df;
+    --state-connecting-bg: #12353a;
+    --state-erasing: #ffb477;
+    --state-erasing-bg: #442719;
+    --state-writing: #f1cc61;
+    --state-writing-bg: #3b3216;
+    --state-resetting: #bdb4ff;
+    --state-resetting-bg: #282451;
     --shadow: 0 24px 64px rgba(0, 0, 0, .24);
   }
 }
