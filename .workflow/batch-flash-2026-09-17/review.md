@@ -19,5 +19,7 @@
 - Browser console: zero errors after the favicon fix.
 - Firmware host suite: passed, including regional fonts, portal contract, release gate, and display safe-area check.
 - ESP-IDF 6.0.2 build and merged binary generation: passed.
+- Deployed HTTPS hardware run: ESP32-S3 revision v0.2 detected, full erase completed, both images reached 100%, verification passed, hard reset sent, and the board returned with zero page or console errors.
+- Deployed standalone reset run: reset signal sent without erase or write; the operation completed in about two seconds after the board row became ready.
 
-Screenshots are saved beside this review as `browser-light.png` and `browser-dark-mobile.png`.
+Screenshots are saved beside this review as `browser-light.png`, `browser-dark-mobile.png`, `hardware-result.png`, and `hardware-reset-result.png`.
