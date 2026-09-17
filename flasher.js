@@ -1,40 +1,168 @@
 import { ESPLoader, Transport } from 'https://cdn.jsdelivr.net/npm/esptool-js@0.6.1/+esm';
-import { overallWriteProgress, validateManifest } from './flasher-core.js?v=20260917-2';
+import {
+  DEFAULT_FLASH_CONCURRENCY,
+  overallWriteProgress,
+  runWithConcurrency,
+  validateManifest,
+} from './flasher-core.js?v=20260917-3';
 
 const $ = (selector) => document.querySelector(selector);
 const fileInput = $('#flashFile');
 const flashButton = $('#serialFlash');
+const resetButton = $('#resetSelected');
 const choosePortButton = $('#choosePort');
+const refreshPortsButton = $('#refreshPorts');
+const boardList = $('#boardList');
+const emptyState = $('#emptyState');
 const log = $('#flashLog');
-const state = $('#deviceState');
-const nextBoard = $('#nextBoard');
-const eraseProgress = $('#eraseProgress');
-const writeProgress = $('#writeProgress');
+const packageState = $('#packageState');
 
 let manifest = null;
 let localApplication = null;
-let port = null;
-let transport = null;
-let loader = null;
-let busy = false;
+let packageImages = null;
+let nextBoardId = 1;
+let batchBusy = false;
+const boards = [];
+const logLines = [];
 
-const setLog = (message) => { log.textContent = message; };
-const setProgress = (bar, label, value) => {
-  const rounded = Math.max(0, Math.min(100, Math.round(value)));
-  bar.value = rounded;
-  $(label).textContent = `${rounded}%`;
-};
 const sizeInMiB = (bytes) => `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
-function showPackage() {
-  if (!manifest) return;
-  const packageSize = manifest.segments.reduce((sum, segment) => sum + segment.size, 0);
-  $('#fileName').textContent = localApplication
-    ? `${localApplication.name} + bundled Chinese font assets`
-    : `${manifest.package} · complete package`;
-  $('#fileMeta').textContent = localApplication
-    ? `${sizeInMiB(localApplication.size)} application + bundled assets at 0x820000`
-    : `${sizeInMiB(packageSize)} · application and font assets · integrity checked before flash`;
+function appendLog(message) {
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  logLines.push(`${time}  ${message}`);
+  log.textContent = logLines.slice(-40).join('\n');
+  log.scrollTop = log.scrollHeight;
+}
+
+function usbId(port) {
+  const info = port.getInfo();
+  if (!info.usbVendorId) return 'Serial device';
+  const vendor = info.usbVendorId.toString(16).padStart(4, '0');
+  const product = (info.usbProductId || 0).toString(16).padStart(4, '0');
+  return `USB ${vendor}:${product}`;
+}
+
+function setPackageState(label, state) {
+  packageState.textContent = label;
+  packageState.dataset.state = state;
+}
+
+function selectedBoards() {
+  return boards.filter((board) => board.selected && board.state !== 'disconnected');
+}
+
+function renderSummary() {
+  $('#boardCount').textContent = String(boards.length);
+  $('#selectedCount').textContent = String(selectedBoards().length);
+  $('#completeCount').textContent = String(boards.filter(({ state }) => state === 'complete').length);
+  $('#failedCount').textContent = String(boards.filter(({ state }) => ['failed', 'disconnected'].includes(state)).length);
+  emptyState.hidden = boards.length > 0;
+
+  const hasSelected = selectedBoards().length > 0;
+  flashButton.disabled = batchBusy || !manifest || !packageImages || !hasSelected;
+  resetButton.disabled = batchBusy || !hasSelected;
+  choosePortButton.disabled = batchBusy || !('serial' in navigator);
+  refreshPortsButton.disabled = batchBusy || !('serial' in navigator);
+  $('#chooseAnother').disabled = batchBusy;
+
+  for (const board of boards) {
+    board.elements.checkbox.disabled = batchBusy || board.busy;
+    board.elements.remove.disabled = batchBusy || board.busy;
+  }
+}
+
+function setBoardState(board, state, status, detail, progress = board.progress) {
+  board.state = state;
+  board.progress = progress;
+  board.elements.row.dataset.state = state;
+  board.elements.status.textContent = status;
+  board.elements.detail.textContent = detail;
+  if (progress === null) {
+    board.elements.progress.removeAttribute('value');
+    board.elements.percent.textContent = 'Working';
+  } else {
+    const value = Math.max(0, Math.min(100, Math.round(progress)));
+    board.elements.progress.value = value;
+    board.elements.percent.textContent = `${value}%`;
+  }
+  renderSummary();
+}
+
+function removeBoard(board) {
+  if (batchBusy || board.busy) return;
+  const index = boards.indexOf(board);
+  if (index >= 0) boards.splice(index, 1);
+  board.elements.row.remove();
+  appendLog(`${board.name} removed from the batch.`);
+  renderSummary();
+}
+
+function createBoardRow(board) {
+  const row = document.createElement('article');
+  row.className = 'board-row';
+  row.dataset.state = 'ready';
+  row.innerHTML = `
+    <label class="board-select" aria-label="Select ${board.name}">
+      <input type="checkbox" checked>
+    </label>
+    <div class="board-identity">
+      <strong></strong>
+      <span></span>
+    </div>
+    <div class="board-progress">
+      <progress max="100" value="0"></progress>
+      <div class="board-progress-copy"><span class="board-detail"></span></div>
+    </div>
+    <div class="board-progress-copy">
+      <span class="board-status">Ready</span>
+      <span class="board-percent">0%</span>
+    </div>
+    <button class="remove-board" type="button">Remove</button>`;
+
+  row.querySelector('.board-identity strong').textContent = board.name;
+  row.querySelector('.board-identity span').textContent = usbId(board.port);
+  const checkbox = row.querySelector('input');
+  const remove = row.querySelector('.remove-board');
+  board.elements = {
+    row,
+    checkbox,
+    remove,
+    progress: row.querySelector('progress'),
+    detail: row.querySelector('.board-detail'),
+    status: row.querySelector('.board-status'),
+    percent: row.querySelector('.board-percent'),
+  };
+
+  checkbox.addEventListener('change', () => {
+    board.selected = checkbox.checked;
+    renderSummary();
+  });
+  remove.addEventListener('click', () => removeBoard(board));
+  boardList.append(row);
+  setBoardState(board, 'ready', 'Ready', 'Approved port, waiting for batch', 0);
+}
+
+function addPort(port) {
+  const existing = boards.find((board) => board.port === port);
+  if (existing) return existing;
+  const board = {
+    id: nextBoardId++,
+    name: `Board ${nextBoardId - 1}`,
+    port,
+    state: 'ready',
+    selected: true,
+    progress: 0,
+    busy: false,
+    loader: null,
+    transport: null,
+    elements: null,
+  };
+  boards.push(board);
+  createBoardRow(board);
+  appendLog(`${board.name} added: ${usbId(port)}.`);
+  renderSummary();
+  return board;
 }
 
 async function sha256Hex(data) {
@@ -43,13 +171,14 @@ async function sha256Hex(data) {
 }
 
 async function loadImages() {
+  if (packageImages) return packageImages;
   const images = [];
   for (const segment of manifest.segments) {
     let data;
     if (segment.address === 0 && localApplication) {
       data = new Uint8Array(await localApplication.arrayBuffer());
       if (data.byteLength >= manifest.segments[1].address) {
-        throw new Error('The selected application image overlaps the font assets partition at 0x820000.');
+        throw new Error('The local application overlaps the font asset partition at 0x820000.');
       }
     } else {
       const response = await fetch(segment.path, { cache: 'no-store' });
@@ -60,58 +189,92 @@ async function loadImages() {
     }
     images.push({ ...segment, size: data.byteLength, data });
   }
+  packageImages = images;
   return images;
 }
 
-function makeLoader() {
-  transport = new Transport(port, false);
+function showPackage() {
+  const packageSize = packageImages.reduce((sum, segment) => sum + segment.size, 0);
+  $('#fileName').textContent = localApplication
+    ? `${localApplication.name} with bundled regional font assets`
+    : `${manifest.package} complete package`;
+  $('#fileMeta').textContent = localApplication
+    ? `${sizeInMiB(localApplication.size)} local app plus checked assets at 0x820000`
+    : `${sizeInMiB(packageSize)} across two checked images`;
+}
+
+async function loadManifest() {
+  try {
+    setPackageState('Checking', 'loading');
+    const response = await fetch('firmware/manifest.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`manifest request returned ${response.status}`);
+    manifest = validateManifest(await response.json());
+    await loadImages();
+    showPackage();
+    setPackageState('Ready', 'ready');
+    appendLog('Firmware package passed size and SHA-256 checks.');
+  } catch (error) {
+    setPackageState('Unavailable', 'error');
+    $('#fileName').textContent = 'Firmware package unavailable';
+    $('#fileMeta').textContent = String(error?.message || error);
+    appendLog(`Package error: ${error?.message || error}`);
+  } finally {
+    renderSummary();
+  }
+}
+
+async function discoverGrantedPorts({ quiet = false } = {}) {
+  if (!('serial' in navigator)) {
+    if (!quiet) appendLog('Web Serial is unavailable. Use current Chrome or Edge over HTTPS.');
+    return;
+  }
+  try {
+    const ports = await navigator.serial.getPorts();
+    const espPorts = ports.filter((port) => port.getInfo().usbVendorId === 0x303a);
+    espPorts.forEach(addPort);
+    if (!quiet) appendLog(espPorts.length ? `${espPorts.length} approved ESP32 port(s) found.` : 'No approved ESP32 ports found. Add each board once.');
+  } catch (error) {
+    appendLog(`Port discovery failed: ${error?.message || error}`);
+  }
+}
+
+function makeLoader(board) {
+  board.transport = new Transport(board.port, false);
   const terminal = {
     clean() {},
-    write(value) { setLog(String(value).trim() || 'Working…'); },
-    writeLine(value) { setLog(String(value).trim() || 'Working…'); },
+    write(value) {
+      const message = String(value).trim();
+      if (message) board.elements.detail.textContent = message;
+    },
+    writeLine(value) {
+      const message = String(value).trim();
+      if (message) board.elements.detail.textContent = message;
+    },
   };
-  loader = new ESPLoader({ transport, baudrate: 115200, terminal, debugLogging: false });
-  return loader;
+  board.loader = new ESPLoader({ transport: board.transport, baudrate: 115200, terminal, debugLogging: false });
+  return board.loader;
 }
 
-async function closeTransport({ forgetPort = false } = {}) {
-  const activeTransport = transport;
-  transport = null;
-  loader = null;
+async function closeBoard(board) {
+  const activeTransport = board.transport;
+  board.transport = null;
+  board.loader = null;
   if (activeTransport) {
     try { await activeTransport.disconnect(); } catch {}
-  } else if (port?.readable) {
-    try { await port.close(); } catch {}
+  } else if (board.port?.readable) {
+    try { await board.port.close(); } catch {}
   }
-  if (forgetPort) port = null;
 }
 
-async function requestPort() {
-  if (!('serial' in navigator)) throw new Error('Web Serial is unavailable. Use current Chrome or Edge over HTTPS.');
-  if (!port) {
-    const grantedPorts = await navigator.serial.getPorts();
-    const espressifPorts = grantedPorts.filter((candidate) => candidate.getInfo().usbVendorId === 0x303a);
-    if (espressifPorts.length === 1) port = espressifPorts[0];
-    else if (grantedPorts.length === 1) port = grantedPorts[0];
-    else port = await navigator.serial.requestPort();
-  }
-  const info = port.getInfo();
-  const usbId = info.usbVendorId
-    ? `${info.usbVendorId.toString(16).padStart(4, '0')}:${(info.usbProductId || 0).toString(16).padStart(4, '0')}`
-    : 'serial';
-  state.textContent = `USB ${usbId} selected · ready`;
-  choosePortButton.textContent = 'USB port selected';
-}
-
-async function connectLoader() {
+async function connectLoader(board) {
   try {
-    setLog('Connecting with the automatic ESP32-S3 reset sequence…');
-    return await makeLoader().main();
+    setBoardState(board, 'connecting', 'Connecting', 'Sending automatic ESP32-S3 reset', null);
+    return await makeLoader(board).main();
   } catch (firstError) {
-    await closeTransport();
-    setLog('Automatic reset did not answer. Retrying a board already in download mode…');
+    await closeBoard(board);
+    setBoardState(board, 'connecting', 'Retrying', 'Trying a board already in download mode', null);
     try {
-      return await makeLoader().main('no_reset');
+      return await makeLoader(board).main('no_reset');
     } catch (secondError) {
       secondError.cause = firstError;
       throw secondError;
@@ -119,71 +282,19 @@ async function connectLoader() {
   }
 }
 
-async function loadManifest() {
+async function flashBoard(board, images) {
+  board.busy = true;
+  renderSummary();
   try {
-    const response = await fetch('firmware/manifest.json', { cache: 'no-store' });
-    if (!response.ok) throw new Error(`manifest request returned ${response.status}`);
-    manifest = validateManifest(await response.json());
-    showPackage();
-    flashButton.disabled = false;
-    setLog('Complete firmware package is ready. Connect one board to begin.');
-  } catch (error) {
-    state.textContent = 'Firmware package unavailable';
-    setLog(`Cannot load the bundled firmware package: ${error.message || error}`);
-  }
-}
+    const chip = await connectLoader(board);
+    appendLog(`${board.name}: ${chip} connected.`);
 
-fileInput.addEventListener('change', () => {
-  const file = fileInput.files?.[0];
-  if (!file) return;
-  localApplication = file;
-  showPackage();
-  setLog('Local application selected. The bundled Chinese font assets will still be written.');
-});
+    setBoardState(board, 'erasing', 'Erasing', 'Full 16 MB flash erase', null);
+    await board.loader.eraseFlash();
 
-$('#chooseAnother').addEventListener('click', () => fileInput.click());
-
-choosePortButton.addEventListener('click', async () => {
-  if (busy) return;
-  choosePortButton.disabled = true;
-  nextBoard.hidden = true;
-  try {
-    await requestPort();
-    setLog('Port selected. Click “Erase and flash complete package”.');
-  } catch (error) {
-    state.textContent = 'Waiting for a board';
-    setLog(`USB selection failed: ${error.message || error}`);
-  } finally {
-    choosePortButton.disabled = false;
-  }
-});
-
-flashButton.addEventListener('click', async () => {
-  if (busy || !manifest) return;
-  busy = true;
-  flashButton.disabled = true;
-  choosePortButton.disabled = true;
-  nextBoard.hidden = true;
-  eraseProgress.value = writeProgress.value = 0;
-  $('#erasePercent').textContent = $('#writePercent').textContent = '—';
-
-  try {
-    if (!port) await requestPort();
-    state.textContent = 'Checking firmware package';
-    setLog('Loading and checking both firmware images…');
-    const images = await loadImages();
-
-    state.textContent = 'Connecting to ESP32-S3 bootloader';
-    const chip = await connectLoader();
-    state.textContent = `${chip} detected · erasing`;
-    setLog('Erasing the entire 16 MB flash…');
-    await loader.eraseFlash();
-    setProgress(eraseProgress, '#erasePercent', 100);
-
-    state.textContent = `${chip} detected · writing two images`;
-    setLog('Erase complete. Writing boot/application and Chinese font assets…');
-    await loader.writeFlash({
-      fileArray: images.map(({ address, data }) => ({ address, data })),
+    setBoardState(board, 'writing', 'Writing', 'Application and regional font assets', 0);
+    await board.loader.writeFlash({
+      fileArray: images.map(({ address, data }) => ({ address, data: new Uint8Array(data) })),
       flashSize: manifest.flashSize,
       flashMode: manifest.flashMode,
       flashFreq: manifest.flashFreq,
@@ -191,46 +302,116 @@ flashButton.addEventListener('click', async () => {
       compress: true,
       reportProgress(fileIndex, written, total) {
         const percent = overallWriteProgress(images, fileIndex, written, total);
-        setProgress(writeProgress, '#writePercent', percent);
-        setLog(`Writing ${images[fileIndex].name}… ${percent}% overall`);
+        setBoardState(board, 'writing', 'Writing', `${images[fileIndex].name} at ${percent}% overall`, percent);
       },
     });
-    setProgress(writeProgress, '#writePercent', 100);
 
-    state.textContent = 'Images verified · resetting board';
-    setLog('Both images were written and verified. Resetting into the application…');
-    await loader.after('hard_reset');
-    state.textContent = 'Flash complete · board reset';
-    setLog('Flash complete. The application and Chinese font assets are installed.');
-    nextBoard.hidden = false;
+    setBoardState(board, 'resetting', 'Resetting', 'Verified images, sending hard reset', 100);
+    await board.loader.after('hard_reset', true);
+    await sleep(400);
+    setBoardState(board, 'complete', 'Complete', 'Reset sent, wait for the first display frame', 100);
+    appendLog(`${board.name}: verified and reset into the application.`);
   } catch (error) {
-    state.textContent = 'Flash failed · port released';
     const message = String(error?.message || error);
-    setLog(`Flash failed: ${message}\n\nThe USB port was released. Re-enter download mode (hold BOOT, tap RESET, release BOOT) and retry.`);
+    setBoardState(board, 'failed', 'Needs attention', message, board.progress ?? 0);
+    appendLog(`${board.name}: failed. ${message}`);
+    throw error;
   } finally {
-    await closeTransport({ forgetPort: true });
-    choosePortButton.textContent = 'Choose USB port';
-    choosePortButton.disabled = false;
-    flashButton.disabled = false;
-    busy = false;
+    await closeBoard(board);
+    board.busy = false;
+    renderSummary();
+  }
+}
+
+async function resetBoard(board) {
+  board.busy = true;
+  renderSummary();
+  try {
+    const chip = await connectLoader(board);
+    setBoardState(board, 'resetting', 'Resetting', `${chip} detected, sending hard reset`, null);
+    await board.loader.after('hard_reset', true);
+    await sleep(400);
+    setBoardState(board, 'complete', 'Reset sent', 'Application boot requested, wait for the first display frame', 100);
+    appendLog(`${board.name}: reset signal sent.`);
+  } catch (error) {
+    const message = String(error?.message || error);
+    setBoardState(board, 'failed', 'Reset failed', message, board.progress ?? 0);
+    appendLog(`${board.name}: reset failed. ${message}`);
+    throw error;
+  } finally {
+    await closeBoard(board);
+    board.busy = false;
+    renderSummary();
+  }
+}
+
+async function runBatch(action, worker) {
+  const targets = selectedBoards();
+  if (batchBusy || targets.length === 0) return;
+  batchBusy = true;
+  for (const board of targets) setBoardState(board, 'queued', 'Queued', `Waiting to ${action}`, 0);
+  renderSummary();
+
+  const results = await runWithConcurrency(targets, DEFAULT_FLASH_CONCURRENCY, worker);
+  const failures = results.filter(({ status }) => status === 'rejected').length;
+  appendLog(failures ? `${action} batch finished with ${failures} board(s) needing attention.` : `${action} batch finished for ${targets.length} board(s).`);
+  batchBusy = false;
+  renderSummary();
+}
+
+fileInput.addEventListener('change', async () => {
+  const file = fileInput.files?.[0];
+  if (!file || batchBusy) return;
+  localApplication = file;
+  packageImages = null;
+  setPackageState('Checking', 'loading');
+  try {
+    await loadImages();
+    showPackage();
+    setPackageState('Ready', 'ready');
+    appendLog('Local application selected. Bundled font assets remain enabled.');
+  } catch (error) {
+    setPackageState('Invalid', 'error');
+    appendLog(`Local image rejected: ${error?.message || error}`);
+  }
+  renderSummary();
+});
+
+$('#chooseAnother').addEventListener('click', () => fileInput.click());
+
+choosePortButton.addEventListener('click', async () => {
+  if (batchBusy) return;
+  try {
+    const port = await navigator.serial.requestPort({ filters: [{ usbVendorId: 0x303a }] });
+    addPort(port);
+  } catch (error) {
+    if (error?.name !== 'NotFoundError') appendLog(`USB selection failed: ${error?.message || error}`);
   }
 });
 
-$('#flashAgain').addEventListener('click', () => {
-  nextBoard.hidden = true;
-  state.textContent = 'Waiting for a board';
-  eraseProgress.value = writeProgress.value = 0;
-  $('#erasePercent').textContent = $('#writePercent').textContent = '—';
-  setLog('Connect the next board, then choose its USB port.');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+refreshPortsButton.addEventListener('click', () => discoverGrantedPorts());
+
+flashButton.addEventListener('click', async () => {
+  if (!packageImages) return;
+  const images = await loadImages();
+  await runBatch('flash', (board) => flashBoard(board, images));
 });
 
-navigator.serial?.addEventListener('disconnect', () => {
-  if (!busy) {
-    port = null;
-    choosePortButton.textContent = 'Choose USB port';
-    state.textContent = 'USB board disconnected';
+resetButton.addEventListener('click', () => runBatch('reset', resetBoard));
+
+navigator.serial?.addEventListener('connect', () => discoverGrantedPorts({ quiet: true }));
+navigator.serial?.addEventListener('disconnect', (event) => {
+  const port = event.port || event.target;
+  const board = boards.find((candidate) => candidate.port === port);
+  if (board && !board.busy) {
+    board.selected = false;
+    board.elements.checkbox.checked = false;
+    setBoardState(board, 'disconnected', 'Disconnected', 'Reconnect USB, then find approved boards', board.progress);
   }
 });
 
-loadManifest();
+if (location.protocol === 'file:') $('#originNotice').hidden = false;
+if (!('serial' in navigator)) appendLog('Web Serial is unavailable. Use current Chrome or Edge over HTTPS.');
+
+renderSummary();
+loadManifest().then(() => discoverGrantedPorts({ quiet: true }));

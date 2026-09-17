@@ -5,14 +5,14 @@
   "flashSize": "16MB",
   "flashMode": "dio",
   "flashFreq": "80m",
-  "generatedAt": "2026-09-17T00:00:00+08:00",
+  "generatedAt": "2026-09-17T09:39:39+08:00",
   "segments": [
     {
       "name": "Boot and application",
       "path": "firmware/airport-display.bin",
       "address": 0,
-      "size": 1674992,
-      "sha256": "78b35bd075435d7fca9938752d51fa51a85b413401c8a5216f8b2a190978db67",
+      "size": 1675152,
+      "sha256": "ee9792a90ea1e015220d166c5d804dce1db1b2a8cc1f8a866c656308d80af91f",
       "allowLocalOverride": true
     },
     {
@@ -20,7 +20,7 @@
       "path": "firmware/assets.bin",
       "address": 8519680,
       "size": 8257536,
-      "sha256": "1654adac294f9201c93aae7e4146bdd23258d704e67a07d886997453c757335e"
+      "sha256": "a13334d973799fdf01c6cbb90997060b1cb7a789ac7d9865e398488dda5e6f74"
     }
   ]
 }

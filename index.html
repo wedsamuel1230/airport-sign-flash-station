@@ -3,61 +3,104 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Airport sign flash station</title>
-  <link rel="stylesheet" href="style.css?v=20260917-2">
-  <script type="module" src="flasher.js?v=20260917-2"></script>
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:,">
+  <title>Airport display batch flash station</title>
+  <link rel="stylesheet" href="style.css?v=20260917-3">
+  <script type="module" src="flasher.js?v=20260917-3"></script>
 </head>
 <body>
   <main class="station">
-    <header>
-      <p class="overline">AIRPORT DISPLAY / USB STATION</p>
-      <h1>Complete firmware flash</h1>
-      <p class="lede">Prepare one ESP32-S3 sign at a time. The station erases the board, writes the application and Chinese font assets, verifies both images, and resets the display.</p>
+    <div id="originNotice" class="origin-notice" hidden>
+      <strong>Open the secure station to use USB.</strong>
+      <span>This local file is a preview. Web Serial and firmware downloads work from the published HTTPS page.</span>
+      <a href="https://wedsamuel1230.github.io/airport-sign-flash-station/">Open live station</a>
+    </div>
+
+    <header class="masthead">
+      <div class="masthead-copy">
+        <p class="overline">AIRPORT DISPLAY / PROVISIONING BENCH</p>
+        <h1>Flash the whole bench.</h1>
+        <p class="lede">Approve each ESP32-S3 once, then run a complete erase, application write, Chinese font asset write, verification, and reset across the batch.</p>
+      </div>
+
+      <aside class="package-panel" aria-labelledby="packageTitle">
+        <div class="package-heading">
+          <div>
+            <p class="section-label">Firmware package</p>
+            <h2 id="packageTitle">Release bundle</h2>
+          </div>
+          <span id="packageState" class="status-chip" data-state="loading">Checking</span>
+        </div>
+        <div class="package-file">
+          <strong id="fileName">Loading bundled firmware package...</strong>
+          <span id="fileMeta">Checking image sizes and SHA-256 hashes.</span>
+        </div>
+        <div class="package-actions">
+          <button id="chooseAnother" class="button button-quiet" type="button">Use local app image</button>
+          <input id="flashFile" type="file" accept=".bin,application/octet-stream" hidden>
+        </div>
+      </aside>
     </header>
-    <section class="panel setup">
-      <div class="step">
-        <span>01</span>
+
+    <section class="workbench" aria-labelledby="queueTitle">
+      <div class="workbench-heading">
         <div>
-          <h2>Check the complete package</h2>
-          <p>The approved application and font assets load automatically and are checked before flashing.</p>
+          <p class="section-label">Board queue</p>
+          <h2 id="queueTitle">Connected ESP32-S3 boards</h2>
+          <p>Previously approved ports appear automatically. Add each new board through the browser chooser.</p>
+        </div>
+        <div class="toolbar" aria-label="Board discovery controls">
+          <button id="refreshPorts" class="button button-secondary" type="button">Find approved boards</button>
+          <button id="choosePort" class="button button-primary" type="button">Add USB board</button>
         </div>
       </div>
-      <label class="file-picker">
-        <input id="flashFile" type="file" accept=".bin,application/octet-stream">
-        <span id="fileName">Loading bundled firmware package…</span>
-      </label>
-      <p id="fileMeta" class="file-meta"></p>
-      <button id="chooseAnother" class="secondary choose-another" type="button">Use another application image</button>
-      <div class="step">
-        <span>02</span>
-        <div>
-          <h2>Connect one board by USB</h2>
-          <p>The page first tries the automatic ESP32-S3 USB reset. If a retry is needed, hold <strong>BOOT</strong>, tap <strong>RESET</strong>, then release <strong>BOOT</strong>.</p>
+
+      <dl class="batch-summary" aria-label="Batch summary">
+        <div><dt>Boards</dt><dd id="boardCount">0</dd></div>
+        <div><dt>Selected</dt><dd id="selectedCount">0</dd></div>
+        <div><dt>Complete</dt><dd id="completeCount">0</dd></div>
+        <div><dt>Needs attention</dt><dd id="failedCount">0</dd></div>
+      </dl>
+
+      <div id="boardList" class="board-list" aria-live="polite">
+        <div id="emptyState" class="empty-state">
+          <strong>No boards in this batch</strong>
+          <span>Connect the USB cables, then choose Add USB board for each new device.</span>
         </div>
       </div>
-      <button id="choosePort" class="secondary" type="button">Choose USB port</button>
-      <button id="serialFlash" class="primary" type="button" disabled>Erase and flash complete package</button>
-      <div class="device-state">
-        <span class="state-light"></span>
-        <span id="deviceState">Waiting for a board</span>
+
+      <div class="batch-controls">
+        <div>
+          <button id="serialFlash" class="button button-primary button-large" type="button" disabled>Flash selected boards</button>
+          <button id="resetSelected" class="button button-secondary button-large" type="button" disabled>Reset selected boards</button>
+        </div>
+        <p id="batchNote">Two boards flash in parallel. Additional boards wait in the queue.</p>
       </div>
-      <div class="progress-block">
-        <div class="progress-label"><span>Full erase</span><span id="erasePercent">—</span></div>
-        <progress id="eraseProgress" max="100" value="0"></progress>
-        <div class="progress-label"><span>Application + Chinese font assets</span><span id="writePercent">—</span></div>
-        <progress id="writeProgress" max="100" value="0"></progress>
+
+      <pre id="flashLog" class="flash-log" aria-live="polite">Checking the firmware package...</pre>
+
+      <div class="bench-note">
+        <strong>Full erase is always on.</strong>
+        <span>Saved settings are removed. The approved application and both regional Chinese font packages are restored before reset.</span>
       </div>
-      <pre id="flashLog" class="flash-log" aria-live="polite">Loading the firmware package…</pre>
-      <div id="nextBoard" class="next-board" hidden>
-        <strong>Board ready</strong>
-        <span>Both images were verified and the board was reset.</span>
-        <button id="flashAgain" class="secondary" type="button">Flash another board</button>
-      </div>
-      <p class="warning">Every run performs a full erase. Existing settings and firmware are removed, then both required images are restored.</p>
     </section>
+
+    <section class="operator-guide" aria-labelledby="guideTitle">
+      <div>
+        <p class="section-label">Operator guide</p>
+        <h2 id="guideTitle">One repeatable batch</h2>
+      </div>
+      <ol>
+        <li><strong>Connect</strong><span>Use powered USB hubs for larger batches and add every board to the queue.</span></li>
+        <li><strong>Flash</strong><span>Keep this tab open until each board says Complete or Needs attention.</span></li>
+        <li><strong>Inspect</strong><span>The display can take a few seconds to mount font assets and draw its first frame after reset.</span></li>
+      </ol>
+    </section>
+
     <footer>
-      <span>Chrome or Edge · secure Web Serial</span>
-      <a href="README.md">Setup notes</a>
+      <span>Chrome or Edge on HTTPS</span>
+      <a href="README.md">Setup and recovery notes</a>
     </footer>
   </main>
 </body>

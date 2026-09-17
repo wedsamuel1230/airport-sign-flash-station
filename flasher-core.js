@@ -1,4 +1,5 @@
 export const ASSETS_FLASH_ADDRESS = 0x820000;
+export const DEFAULT_FLASH_CONCURRENCY = 2;
 
 const SHA256_PATTERN = /^[0-9a-f]{64}$/;
 
@@ -36,4 +37,25 @@ export function overallWriteProgress(segments, fileIndex, written, total) {
   const currentSize = segments[fileIndex].size;
   const currentWritten = total > 0 ? Math.min(currentSize, Math.max(0, written / total * currentSize)) : 0;
   return Math.min(100, Math.round((completed + currentWritten) / packageSize * 100));
+}
+
+export async function runWithConcurrency(items, limit, worker) {
+  if (!Number.isInteger(limit) || limit < 1) throw new Error('Concurrency must be a positive integer.');
+  const results = new Array(items.length);
+  let nextIndex = 0;
+
+  async function runLane() {
+    while (nextIndex < items.length) {
+      const index = nextIndex++;
+      try {
+        results[index] = { status: 'fulfilled', value: await worker(items[index], index) };
+      } catch (reason) {
+        results[index] = { status: 'rejected', reason };
+      }
+    }
+  }
+
+  const laneCount = Math.min(limit, items.length);
+  await Promise.all(Array.from({ length: laneCount }, () => runLane()));
+  return results;
 }
