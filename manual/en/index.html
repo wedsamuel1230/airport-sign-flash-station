@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hong Kong Airport Display — User Guide · v1.1.2</title>
+<meta name="description" content="User guide for the Hong Kong Airport Display (ESP32-S3 flight information display): quick start, screen, console, maintenance, FAQ, specifications and support.">
+<link rel="canonical" href="https://wedsamuel1230.github.io/airport-sign-flash-station/manual/en/">
+<link rel="alternate" hreflang="zh-Hant" href="https://wedsamuel1230.github.io/airport-sign-flash-station/manual/">
+<link rel="alternate" hreflang="en" href="https://wedsamuel1230.github.io/airport-sign-flash-station/manual/en/">
+<link rel="alternate" hreflang="x-default" href="https://wedsamuel1230.github.io/airport-sign-flash-station/manual/">
+<meta name="theme-color" content="#0d1f33">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hong Kong Airport Display — User Guide · v1.1.2">
+<meta property="og:description" content="User guide for the Hong Kong Airport Display (ESP32-S3 flight information display): quick start, screen, console, maintenance, FAQ, specifications and support.">
+<meta property="og:url" content="https://wedsamuel1230.github.io/airport-sign-flash-station/manual/en/">
+<meta property="og:image" content="https://wedsamuel1230.github.io/airport-sign-flash-station/manual/assets/og-manual.png">
+<meta property="og:locale" content="en">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/manual.css">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Hong Kong Airport Display — User Guide · v1.1.2","inLanguage":"en","dateModified":"2026-09-26","url":"https://wedsamuel1230.github.io/airport-sign-flash-station/manual/en/","about":"ESP32-S3 airport-style flight information display"},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Cannot find AirportDisplay-XXXX?","acceptedAnswer":{"@type":"Answer","text":"Move closer, check the phone is on 2.4GHz, turn off any VPN, then power-cycle and retry."}},{"@type":"Question","name":"I forgot the console password.","acceptedAnswer":{"@type":"Answer","text":"Read the six characters after MAC at the bottom of the screen: the password is HK- plus those six. If you changed it and forgot, run a factory reset."}},{"@type":"Question","name":"192.168.4.1 does not respond.","acceptedAnswer":{"@type":"Answer","text":"Check that the phone is still connected to the display's hotspot rather than mobile data."}},{"@type":"Question","name":"Nothing changes after I edit the settings.","acceptedAnswer":{"@type":"Answer","text":"Press \"Save flight settings\". A background image is applied only after the upload finishes."}},{"@type":"Question","name":"The background upload fails.","acceptedAnswer":{"@type":"Answer","text":"Only PNG and JPEG are supported; the device crops to 320×212, so use a landscape picture."}},{"@type":"Question","name":"The screen is blank.","acceptedAnswer":{"@type":"Answer","text":"Check the power switch and USB-C cable, then restart. If it stays blank, the unit needs service."}},{"@type":"Question","name":"Chinese characters do not appear.","acceptedAnswer":{"@type":"Answer","text":"Chinese fonts are built in. If a single character shows as a box, try another language or a simpler word."}},{"@type":"Question","name":"Can it join a 5GHz network?","acceptedAnswer":{"@type":"Answer","text":"No. The display only supports 2.4GHz. If your router broadcasts both bands, pick the 2.4GHz SSID."}}]}]</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<header class="topbar">
+  <div class="inner">
+    <a class="brand" href="../">
+      <img src="../assets/airport-logo.png" width="520" height="132" alt="">
+      <span class="name">Hong Kong Airport Display — User Guide<span class="sub">Firmware 1.1.2 · 2026-09-26</span></span>
+    </a>
+    <span class="spacer"></span>
+    <a class="btn" href="../airport-display-manual-foldout-A4.pdf">Download print PDF</a>
+    <a class="btn ghost" href="../"
+       hreflang="zh-Hant" lang="zh-Hant">繁體中文</a>
+    <button class="iconbtn" id="theme-toggle" type="button" aria-pressed="false" title="Dark mode"
+            aria-label="Dark mode">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Contents">
+    <div class="search">
+      <label for="search">Search the manual</label>
+      <input id="search" type="search" placeholder="e.g. reset, Wi-Fi, BOOT" autocomplete="off" aria-describedby="search-hint">
+      <p class="hint" id="search-hint">Filters the sections as you type</p>
+      <p class="status" id="search-status" role="status" aria-live="polite"></p>
+    </div>
+    <ol class="toc">
+      <li><a href="#quick-start">Quick start: four steps</a></li>
+      <li><a href="#screen">What the screen shows</a><ol><li class="sub"><a href="#screen-1">Reading the system band</a></li></ol></li>
+      <li><a href="#console">Console: flight data</a></li>
+      <li><a href="#settings">Background image · Wi-Fi · Login settings</a><ol><li class="sub"><a href="#settings-1">Background image</a></li><li class="sub"><a href="#settings-2">Wi-Fi settings (optional)</a></li><li class="sub"><a href="#settings-3">Login settings</a></li></ol></li>
+      <li><a href="#maintenance">Maintenance and recovery</a><ol><li class="sub"><a href="#maintenance-1">Factory reset</a></li><li class="sub"><a href="#maintenance-2">Download mode (service and re-flashing)</a></li><li class="sub"><a href="#maintenance-3">OTA firmware update (advanced)</a></li></ol></li>
+      <li><a href="#faq">Frequently asked questions</a></li>
+      <li><a href="#specs">Specifications</a></li>
+      <li><a href="#support">Support</a></li></ol>
+    <p class="meta">Firmware 1.1.2 · Updated 2026-09-26</p>
+  </nav>
+  <main id="main">
+    <div class="hero">
+      <p class="kicker">Hong Kong Airport Display</p>
+      <h1>Hong Kong Airport Display — User Guide</h1>
+      <p>User guide for the Hong Kong Airport Display (ESP32-S3 flight information display): quick start, screen, console, maintenance, FAQ, specifications and support.</p>
+      <p class="chips">
+        <span class="chip">Firmware 1.1.2</span>
+        <span class="chip">A4 · 105 × 74.25 mm</span>
+        <span class="chip">Updated 2026-09-26</span>
+      </p>
+    </div>
+    <article>
+<section id="quick-start">
+<h2 id="quick-start-four-steps">Quick start: four steps</h2>
+<ol class="steps">
+  <li data-n="1"><span class="step-title">Power on</span>Connect USB-C 5V power and switch the unit on. The screen stays dark briefly, then shows the demo flight.</li>
+  <li data-n="2"><span class="step-title">Read the screen footer</span>Note the six characters after <b>MAC</b>; every password is <b>HK-</b> plus those six.</li>
+  <li data-n="3"><span class="step-title">Join the device hotspot</span>On your phone, join <code>AirportDisplay-XXXX</code> (the last four MAC characters) with the password <code>HK-XXXXXX</code>.</li>
+  <li data-n="4"><span class="step-title">Open the console</span>Open <code>http://192.168.4.1/</code> in a browser and sign in as <code>admin</code> with <code>HK-XXXXXX</code>.</li>
+</ol>
+
+<div class="warn">
+<b>The display runs its own Wi-Fi hotspot</b>, so no internet is needed for setup. A browser warning that the page is "Not secure" is expected: it is served locally over HTTP.
+</div>
+
+<div class="note">
+Setup is a one-off. Later starts reuse the saved flight data and background image, and work with no network.
+</div>
+
+
+
+
+</section>
+<section id="screen">
+<h2 id="what-the-screen-shows">What the screen shows</h2>
+<div class="screen-figure">
+  <div class="screen-shot-wrap">
+    <img class="screen-shot" src="assets/device-screen.png" alt="Display panel" width="320" height="820" loading="lazy" decoding="async">
+    <span class="dot" style="top:4.3%;">1</span>
+    <span class="dot dot-r" style="top:4.3%;">2</span>
+    <span class="dot" style="top:11.2%;">3</span>
+    <span class="dot" style="top:23.5%;">4</span>
+    <span class="dot" style="top:33.6%;">5</span>
+    <span class="dot" style="top:46.6%;">6</span>
+    <span class="dot" style="top:88.1%;">7</span>
+  </div>
+  <div class="callout-board">
+    <div class="callout-row half-split" style="top:3.3mm;">
+      <div class="callout"><span class="bubble">1</span><span class="callout-text">Flight number (e.g. CX 548)</span></div>
+      <div class="callout"><span class="bubble">2</span><span class="callout-text">Departure time (24-hour clock)</span></div>
+    </div>
+    <div class="callout-row" style="top:8.6mm;">
+      <div class="callout"><span class="bubble">3</span><span class="callout-text">Codeshare flight (optional)</span></div>
+    </div>
+    <div class="callout-row" style="top:18.1mm;">
+      <div class="callout"><span class="bubble">4</span><span class="callout-text">Departure airport</span></div>
+    </div>
+    <div class="callout-row" style="top:25.8mm;">
+      <div class="callout"><span class="bubble">5</span><span class="callout-text">Destination (large, yellow)</span></div>
+    </div>
+    <div class="callout-row" style="top:35.8mm;">
+      <div class="callout"><span class="bubble">6</span><span class="callout-text">Boarding status (e.g. Boarding)</span></div>
+    </div>
+    <div class="callout-row" style="top:67.7mm;">
+      <div class="callout"><span class="bubble">7</span><span class="callout-text">System band: <b>MAC</b>, network state and BOOT hint</span></div>
+    </div>
+  </div>
+</div>
+
+<h3 id="screen-1">Reading the system band</h3>
+<ul>
+<li><code>AP</code>: the display is broadcasting its own hotspot and waiting to be configured.</li>
+<li><code>STA 192.168.x.x</code>: the display has joined your Wi-Fi and shows its IP address.</li>
+<li>The artwork in the middle is the replaceable background image; the factory default is shown.</li>
+</ul>
+<div class="note">
+Before any change, the display shows the built-in demo record: CX 548 · 08:55 · JL 7030 · Hong Kong → Tokyo Haneda · Boarding.
+</div>
+
+
+
+
+</section>
+<section id="console">
+<h2 id="console-flight-data">Console: flight data</h2>
+<p>After signing in, the console has five areas: <b>flight data</b>, <b>Wi-Fi settings</b>, <b>background image</b>, <b>OTA / maintenance</b> and <b>login settings</b>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>What to enter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flight number</td>
+<td>e.g. CX 548</td>
+</tr>
+<tr>
+<td>Codeshare</td>
+<td>e.g. JL 7030, leave blank if none</td>
+</tr>
+<tr>
+<td>Departure</td>
+<td>English, Traditional and Simplified Chinese</td>
+</tr>
+<tr>
+<td>Destination</td>
+<td>English, Traditional and Simplified Chinese</td>
+</tr>
+<tr>
+<td>Departure time</td>
+<td>24-hour clock, e.g. 08:55</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>e.g. Boarding / 登機中</td>
+</tr>
+<tr>
+<td>Display language</td>
+<td>Traditional Chinese, Simplified Chinese or English; applies immediately</td>
+</tr>
+</tbody>
+</table></div>
+<p>Press <b>"Save flight settings"</b> after editing; the screen updates immediately.</p>
+<div class="note">
+The display has no external flight API, so it shows exactly what you enter: your own flight, a friend's, or an invented boarding flight. Changing the display language applies at once to the screen and the console.
+</div>
+
+
+
+
+</section>
+<section id="settings">
+<h2 id="background-image--wi-fi--login-settings">Background image · Wi-Fi · Login settings</h2>
+<h3 id="settings-1">Background image</h3>
+<p>Choose a PNG or JPEG, set the crop with the horizontal and vertical sliders, then press <b>"Upload background image"</b>. The device crops it to 320×212; the preview matches the result.</p>
+<h3 id="settings-2">Wi-Fi settings (optional)</h3>
+<p>The display can join your Wi-Fi network (2.4GHz only). The screen then shows <code>STA</code> and an IP you can use to open the console.</p>
+<ul>
+<li>A blank password keeps the current network.</li>
+<li>Tick "Clear saved Wi-Fi" to return to hotspot-only mode.</li>
+<li>The display works normally without any Wi-Fi connection.</li>
+</ul>
+<h3 id="settings-3">Login settings</h3>
+<p>Change the console account and password (at least 8 characters). After saving, sign in again with the new account.</p>
+<img src="assets/console-flights-panel.png" alt="Console on a phone" style="width:42mm; display:block; margin:1.4mm auto 1mm; border:1px solid #d8dee7; border-radius:1.5mm;" width="720" height="720" loading="lazy" decoding="async">
+
+<p style="text-align:center; font-size:6.6pt; color:#6b7583; margin:0;">Console on a phone (flight data page)</p>
+
+
+
+
+</section>
+<section id="maintenance">
+<h2 id="maintenance-and-recovery">Maintenance and recovery</h2>
+<div class="button-figure">
+  <img class="button-shot" src="assets/board-buttons.jpg" alt="Side buttons: RST, BOOT and the power switch" width="600" height="896" loading="lazy" decoding="async">
+  <div class="callout-board">
+    <div class="callout"><span class="bubble dot-rst">1</span><span class="callout-text"><b>RST</b>: press to restart (keeps your settings)</span></div>
+    <div class="callout"><span class="bubble dot-boot">2</span><span class="callout-text"><b>BOOT</b>: hold about 5 s = factory reset</span></div>
+    <div class="callout"><span class="bubble dot-pwr">3</span><span class="callout-text">Power switch (lowest on the side, by the USB-C): ON/OFF</span></div>
+  </div>
+</div>
+
+<h3 id="maintenance-1">Factory reset</h3>
+<p>Hold <b>BOOT</b> for about <b>5 seconds</b> (the screen footer shows the hint), then release. The display restarts and clears flight data, Wi-Fi, the background image and the console account.</p>
+<h3 id="maintenance-2">Download mode (service and re-flashing)</h3>
+<p>Hold <b>BOOT</b>, tap <b>RST</b>, then release BOOT. The display enters download mode.</p>
+<h3 id="maintenance-3">OTA firmware update (advanced)</h3>
+<p>Press and release BOOT to authorise an update (valid for 120 seconds), then upload a <code>.bin</code> file for this product under "Maintenance tools".</p>
+<div class="warn">
+<b>Warning:</b> uploading the wrong file can leave the display unable to boot. If you are unsure, do not update it yourself; ask us at the market.
+</div>
+
+<p>To re-flash from a computer, see the flash station address and QR code on the back page.</p>
+
+
+
+
+</section>
+<section id="faq">
+<h2 id="frequently-asked-questions">Frequently asked questions</h2>
+<dl class="qa">
+  <dt>Cannot find AirportDisplay-XXXX?</dt>
+  <dd>Move closer, check the phone is on 2.4GHz, turn off any VPN, then power-cycle and retry.</dd>
+  <dt>I forgot the console password.</dt>
+  <dd>Read the six characters after MAC at the bottom of the screen: the password is <code>HK-</code> plus those six. If you changed it and forgot, run a factory reset.</dd>
+  <dt>192.168.4.1 does not respond.</dt>
+  <dd>Check that the phone is still connected to the display's hotspot rather than mobile data.</dd>
+  <dt>Nothing changes after I edit the settings.</dt>
+  <dd>Press "Save flight settings". A background image is applied only after the upload finishes.</dd>
+  <dt>The background upload fails.</dt>
+  <dd>Only PNG and JPEG are supported; the device crops to 320×212, so use a landscape picture.</dd>
+  <dt>The screen is blank.</dt>
+  <dd>Check the power switch and USB-C cable, then restart. If it stays blank, the unit needs service.</dd>
+  <dt>Chinese characters do not appear.</dt>
+  <dd>Chinese fonts are built in. If a single character shows as a box, try another language or a simpler word.</dd>
+  <dt>Can it join a 5GHz network?</dt>
+  <dd>No. The display only supports 2.4GHz. If your router broadcasts both bands, pick the 2.4GHz SSID.</dd>
+</dl>
+
+
+
+
+</section>
+<section id="specs">
+<h2 id="specifications">Specifications</h2>
+<table class="spec-table">
+  <tr><td>Display</td><td>3.16-inch LCD, 320 × 820 portrait, 550 cd/m²</td></tr>
+  <tr><td>Processor</td><td>ESP32-S3R8 (dual core, 240MHz)</td></tr>
+  <tr><td>Memory</td><td>16MB flash / 8MB PSRAM</td></tr>
+  <tr><td>Wireless</td><td>Wi-Fi 2.4GHz (802.11 b/g/n), Bluetooth 5 LE</td></tr>
+  <tr><td>Power</td><td>USB-C 5V (power supply not included)</td></tr>
+  <tr><td>Background</td><td>PNG / JPEG, cropped to 320 × 212</td></tr>
+  <tr><td>Language / firmware</td><td>Traditional Chinese, Simplified Chinese, English / 1.1.2 (2026-09)</td></tr>
+</table></div>
+
+
+</section>
+<section id="support">
+<h2 id="support">Support</h2>
+<div class="support">
+  <div class="support-text">
+    <p>If you have any questions, ask us at the market, or scan the QR code to open the USB re-flash page.</p>
+    <p class="link-text"><a href="https://github.com/wedsamuel1230/airport-sign-flash-station">github.com/wedsamuel1230/airport-sign-flash-station</a></p>
+    <p>Re-flashing needs Chrome or Edge and a USB-C cable that carries data.</p>
+  </div>
+  <img class="qr" src="assets/qr-flash-station.png" alt="Re-flash page QR code" width="492" height="492" loading="lazy" decoding="async">
+</div>
+
+<div class="note">
+Do not open the enclosure. Keep the unit away from heat, moisture and direct sunlight. Use a 5V USB power source.
+</div>
+</section>
+    </article>
+  </main>
+</div>
+<footer class="site">
+  <p>Hong Kong Airport Display — User Guide · ESP32-S3 · Firmware 1.1.2 ·
+     <a href="../en/legal/">Legal · Privacy</a> ·
+     <a href="https://github.com/wedsamuel1230/airport-sign-flash-station">GitHub</a></p>
+</footer>
+<button class="totop" id="totop" type="button" aria-label="Back to top" data-show="false">↑</button>
+<script src="../assets/manual.js" defer></script>
+</body>
+</html>

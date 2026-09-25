@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://wedsamuel1230.github.io/airport-sign-flash-station/manual/sitemap.xml
