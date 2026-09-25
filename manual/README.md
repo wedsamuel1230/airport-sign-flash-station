@@ -3,6 +3,9 @@
 `airport-display-manual-foldout-A4.pdf` — 一份 PDF，兩張 A4。
 One PDF, two A4 sheets.
 
+網上版 / Online edition: <https://wedsamuel1230.github.io/airport-sign-flash-station/manual/>
+（同一份內容，連「規格」同 Wi-Fi／背景圖片設定，另加機側按鈕位置圖）
+
 ## 中文
 
 * 一張 A4 摺三次 → 成品 105 × 74.25mm，放得入 **130 × 90mm** 的盒。
@@ -13,6 +16,10 @@ One PDF, two A4 sheets.
 * 內容：快速上手 4 步、螢幕內容說明、控制台、維護與復原、常見問題（8 條）、支援。
   為咗放大字級，「規格」同「背景圖片 · Wi-Fi · 登入設定」冇收錄喺卡上。
 * 建議 70–80g 紙（8 層疊起），出貨前先試印一張。
+
+驗證：`python3 tools/verify-outputs.py` 會斷言本摺頁 4 頁 A4（頁 1–2 中文、
+頁 3–4 英文），以及 `archive/` 內舊版摺頁的頁數與尺寸；`tools/build-all.sh`
+最後會自動執行。
 
 ## English
 

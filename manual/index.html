@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>香港機場水牌 · 使用說明 / Hong Kong Airport Display — User Guide</title>
+<style>/* ---------------------------------------------------------------------------
+   Screen stylesheet for the online manual. Same visual language as the printed
+   fold-out (ink #14202e, magenta #c44770, yellow #f2c94c, navy #1b4d8f) but
+   sized in rem for the web, and with the two-column figures stacking on narrow
+   screens.
+   --------------------------------------------------------------------------- */
+
+:root {
+  --ink: #14202e;
+  --head: #0d1f33;
+  --magenta: #c44770;
+  --yellow: #f2c94c;
+  --navy: #1b4d8f;
+  --muted: #6b7583;
+  --rule: #e3e7ec;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: #f6f8fa; color: var(--ink);
+  font-family: -apple-system, "PingFang HK", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+  font-size: 17px; line-height: 1.7;
+}
+.wrap { max-width: 60rem; margin: 0 auto; padding: 0 1.25rem 4rem; }
+
+/* ---------- masthead ---------- */
+.masthead {
+  background: #fff; border-bottom: 1px solid var(--rule);
+  padding: 2.4rem 0 1.8rem; margin-bottom: 2rem;
+}
+.masthead .wrap { padding-bottom: 0; }
+.masthead img.logo { width: 96px; display: block; margin-bottom: 1rem; }
+.kicker {
+  color: var(--magenta); font-size: .78rem; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase; margin: 0 0 .5rem;
+}
+h1.title { font-size: 2rem; line-height: 1.2; margin: 0 0 .6rem; color: var(--head); }
+.subtitle { color: #47536a; margin: 0 0 1.2rem; }
+.rule { height: 3px; width: 120px; background: var(--yellow); border-radius: 2px; margin: 0 0 1.4rem; }
+.actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+.btn {
+  display: inline-block; background: var(--magenta); color: #fff; text-decoration: none;
+  font-weight: 600; padding: .6rem 1.1rem; border-radius: 999px; font-size: .95rem;
+}
+.btn.ghost { background: #fff; color: var(--navy); border: 1px solid var(--rule); }
+.meta { color: var(--muted); font-size: .85rem; }
+
+/* ---------- language nav ---------- */
+.langnav { display: flex; gap: .5rem; margin: 0 0 1.6rem; }
+.langnav a {
+  text-decoration: none; color: var(--navy); border: 1px solid var(--rule);
+  background: #fff; border-radius: 999px; padding: .35rem .9rem; font-size: .9rem;
+}
+
+/* ---------- document ---------- */
+article {
+  background: #fff; border: 1px solid var(--rule); border-radius: 14px;
+  padding: 2rem 2.2rem 2.6rem; margin-bottom: 2.4rem;
+}
+h2 {
+  font-size: 1.45rem; line-height: 1.25; color: var(--head);
+  margin: 2.4rem 0 1.2rem; padding-bottom: .5rem;
+  border-bottom: 2px solid var(--magenta);
+}
+article > h2:first-of-type { margin-top: 0; }
+h3 { font-size: 1.12rem; color: var(--head); margin: 1.8rem 0 .7rem; }
+p { margin: 0 0 1rem; }
+ul, ol { margin: 0 0 1rem; padding-left: 1.3rem; }
+li { margin-bottom: .35rem; }
+a { color: var(--navy); }
+code {
+  font-size: .92em; background: #eef1f5; border-radius: 4px; padding: .1em .35em;
+  word-break: break-word;
+}
+strong, b { color: var(--head); }
+
+table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.4rem; font-size: .95rem; }
+th, td { border: 1px solid #dbe3ec; padding: .5rem .6rem; text-align: left; vertical-align: top; }
+th { background: #eef2f8; color: var(--head); }
+table.spec-table td:first-child { white-space: nowrap; color: #45526a; width: 9rem; }
+
+/* ---------- numbered steps ---------- */
+ol.steps { list-style: none; padding-left: 0; counter-reset: step; }
+ol.steps > li { position: relative; padding-left: 2.6rem; margin-bottom: 1.1rem; }
+ol.steps > li::before {
+  content: attr(data-n); position: absolute; left: 0; top: .1rem;
+  width: 1.8rem; height: 1.8rem; border-radius: 50%; background: var(--magenta);
+  color: #fff; font-weight: 700; font-size: .9rem; display: flex;
+  align-items: center; justify-content: center;
+}
+.step-title { font-weight: 700; display: block; }
+
+/* ---------- figures ---------- */
+.screen-figure, .button-figure {
+  display: flex; gap: 1.4rem; align-items: flex-start; flex-wrap: wrap;
+  margin: 1.2rem 0 1.6rem;
+}
+.screen-shot-wrap { position: relative; width: 150px; flex: 0 0 auto; padding: 0 1.2rem; }
+.screen-shot { width: 150px; display: block; border: 1px solid #d8dee7; border-radius: 8px; }
+.screen-shot-wrap .dot {
+  position: absolute; left: 0; transform: translateY(-50%);
+  width: 20px; height: 20px; border-radius: 50%; background: var(--yellow);
+  color: var(--head); font-size: 11px; font-weight: 700; display: flex;
+  align-items: center; justify-content: center;
+  box-shadow: 0 0 0 1px rgba(13, 31, 51, .25);
+}
+.screen-shot-wrap .dot-r { left: auto; right: 0; }
+.button-shot { width: 220px; flex: 0 0 auto; display: block; border-radius: 10px; }
+.callout-board { flex: 1 1 18rem; }
+.callout {
+  position: relative; padding-left: 1.6rem; margin: 0 0 .55rem;
+}
+.callout .bubble {
+  position: absolute; left: 0; top: .32rem;
+  width: 1.15rem; height: 1.15rem; border-radius: 50%;
+  background: var(--yellow); color: var(--head); font-size: .72rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.bubble.dot-rst { background: #d02c56; color: #fff; }
+.bubble.dot-boot { background: #f1c02a; color: var(--head); }
+.bubble.dot-pwr { background: #1851a3; color: #fff; }
+
+/* ---------- callouts ---------- */
+.warn, .note {
+  padding: .75rem 1rem; border-radius: 0 8px 8px 0; margin: 1.2rem 0;
+  font-size: .97rem;
+}
+.warn { background: #fdf3f6; border-left: calc(.55rem + 1px) solid var(--magenta); }
+.warn b { color: #8f2044; }
+.note { background: #fdf9ec; border-left: calc(.55rem + 1px) solid var(--yellow); }
+
+/* ---------- support ---------- */
+.support { display: flex; gap: 1.4rem; align-items: flex-start; flex-wrap: wrap; margin: 1.2rem 0; }
+.support-text { flex: 1 1 16rem; }
+.qr { width: 150px; height: 150px; flex: 0 0 150px; }
+.link-text { font-size: .85rem; word-break: break-all; }
+
+/* ---------- question and answer list ---------- */
+dl.qa { margin: 0; }
+dl.qa dt { font-weight: 700; color: var(--head); margin-top: 1rem; }
+dl.qa dd { margin: .2rem 0 0; }
+
+footer {
+  color: var(--muted); font-size: .88rem; text-align: center;
+  padding: 2rem 0 0; border-top: 1px solid var(--rule); margin-top: 1rem;
+}
+
+@media (max-width: 640px) {
+  article { padding: 1.4rem 1.2rem 2rem; border-radius: 10px; }
+  h1.title { font-size: 1.55rem; }
+  .screen-shot-wrap, .screen-shot { width: 120px; }
+  .button-shot { width: 100%; max-width: 320px; }
+}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap">
+    <img class="logo" src="assets/airport-logo.png" alt="航班顯示">
+    <p class="kicker">Hong Kong Airport Display</p>
+    <h1 class="title">香港機場水牌 · 使用說明</h1>
+    <p class="subtitle">機場風格航班資訊顯示器 · Airport-style flight information display<br>
+      繁體中文 / 简体中文 / English · 韌體 firmware 1.1.2 · 2026-09</p>
+    <div class="rule"></div>
+    <div class="actions">
+      <a class="btn" href="airport-display-manual-foldout-A4.pdf">下載打印版 PDF（A4 摺頁 · 大字）</a>
+      <a class="btn ghost" href="https://github.com/wedsamuel1230/airport-sign-flash-station">重新刷機 / Re-flash</a>
+      <span class="meta">PDF：2 張 A4，摺三次，成品 105 × 74.25mm</span>
+    </div>
+  </div>
+</header>
+<div class="wrap">
+  <nav class="langnav">
+    <a href="#zh">繁體中文</a>
+    <a href="#en">English</a>
+  </nav>
+  
+  <article id="zh">
+    <h1 class="title" style="font-size:1.6rem;margin-bottom:1rem">繁體中文</h1>
+    <div class="page-break"></div>
+
+<h2 id="快速上手四個步驟">快速上手：四個步驟</h2>
+<ol class="steps">
+  <li data-n="1"><span class="step-title">接通電源並開機</span>以 USB-C 5V 供電，打開機側電源開關。螢幕會先熄滅片刻，數秒後亮起並顯示示範航班。</li>
+  <li data-n="2"><span class="step-title">查看螢幕底部</span>記下 <b>MAC</b> 後面的 6 位英數；所有密碼均為 <b>HK-</b> 加上這 6 位。</li>
+  <li data-n="3"><span class="step-title">連接裝置熱點</span>在手機的 Wi-Fi 清單中選擇 <code>AirportDisplay-XXXX</code>（XXXX 為螢幕 MAC 的後 4 位），密碼為 <code>HK-XXXXXX</code>。</li>
+  <li data-n="4"><span class="step-title">開啟控制台</span>在瀏覽器輸入 <code>http://192.168.4.1/</code>；出現登入視窗時，帳號輸入 <code>admin</code>，密碼輸入 <code>HK-XXXXXX</code>。</li>
+</ol>
+
+<div class="warn">
+<b>水牌會自行開啟 Wi-Fi 熱點</b>，無需互聯網即可完成設定。瀏覽器可能顯示「不安全」警告，原因是裝置使用本機 HTTP 網頁，屬正常情況。
+</div>
+
+<div class="note">
+設定一次即可。日後每次開機，水牌都會沿用已儲存的航班資料與背景圖片，離線時仍可正常顯示。
+</div>
+
+<div class="page-break"></div>
+
+<h2 id="螢幕內容說明">螢幕內容說明</h2>
+<div class="screen-figure">
+  <div class="screen-shot-wrap">
+    <img class="screen-shot" src="assets/device-screen.png" alt="水牌螢幕">
+    <span class="dot" style="top:4.3%;">1</span>
+    <span class="dot dot-r" style="top:4.3%;">2</span>
+    <span class="dot" style="top:11.2%;">3</span>
+    <span class="dot" style="top:23.5%;">4</span>
+    <span class="dot" style="top:33.6%;">5</span>
+    <span class="dot" style="top:46.6%;">6</span>
+    <span class="dot" style="top:88.1%;">7</span>
+  </div>
+  <div class="callout-board">
+    <div class="callout-row half-split" style="top:3.3mm;">
+      <div class="callout"><span class="bubble">1</span><span class="callout-text">航班編號（例：CX 548）</span></div>
+      <div class="callout"><span class="bubble">2</span><span class="callout-text">出發時間（24 小時制）</span></div>
+    </div>
+    <div class="callout-row" style="top:8.6mm;">
+      <div class="callout"><span class="bubble">3</span><span class="callout-text">代碼共享航班（可留空）</span></div>
+    </div>
+    <div class="callout-row" style="top:18.1mm;">
+      <div class="callout"><span class="bubble">4</span><span class="callout-text">出發地</span></div>
+    </div>
+    <div class="callout-row" style="top:25.8mm;">
+      <div class="callout"><span class="bubble">5</span><span class="callout-text">目的地（大字、黃色）</span></div>
+    </div>
+    <div class="callout-row" style="top:35.8mm;">
+      <div class="callout"><span class="bubble">6</span><span class="callout-text">登機狀態（例：登機中）</span></div>
+    </div>
+    <div class="callout-row" style="top:67.7mm;">
+      <div class="callout"><span class="bubble">7</span><span class="callout-text">系統帶：<b>MAC</b>、網絡狀態與 BOOT 提示</span></div>
+    </div>
+  </div>
+</div>
+
+<h3 id="系統帶說明">系統帶說明</h3>
+<ul>
+<li><code>AP</code>：水牌正在廣播自身熱點，等待連線設定。</li>
+<li><code>STA 192.168.x.x</code>：水牌已連接您的 Wi-Fi，並顯示其 IP 位址。</li>
+<li>中間的圖案為可更換的背景圖片，出廠時為預設圖。</li>
+</ul>
+<div class="note">
+未進行任何設定前，水牌顯示內建示範資料：CX 548 · 08:55 · JL 7030 · 香港 → 東京羽田 · 登機中。
+</div>
+
+<div class="page-break"></div>
+
+<h2 id="控制台航班資料">控制台：航班資料</h2>
+<p>登入後，控制台分為五個區域：<b>航班資料</b>、<b>Wi-Fi 設定</b>、<b>背景圖片</b>、<b>OTA／維護</b>、<b>登入設定</b>。</p>
+<table>
+<thead>
+<tr>
+<th>欄位</th>
+<th>填寫內容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flight number 航班編號</td>
+<td>例：CX 548</td>
+</tr>
+<tr>
+<td>Codeshare 代碼共享</td>
+<td>例：JL 7030，沒有可留空</td>
+</tr>
+<tr>
+<td>Departure 出發地</td>
+<td>英文、繁中、簡中各一格</td>
+</tr>
+<tr>
+<td>Destination 目的地</td>
+<td>英文、繁中、簡中各一格</td>
+</tr>
+<tr>
+<td>Departure time 出發時間</td>
+<td>24 小時制，例：08:55</td>
+</tr>
+<tr>
+<td>Status 狀態</td>
+<td>例：登機中 / Boarding</td>
+</tr>
+<tr>
+<td>顯示語言</td>
+<td>繁體中文、简体中文或 English，選擇後即時生效</td>
+</tr>
+</tbody>
+</table>
+<p>修改後請按 <b>「儲存航班設定」</b>，螢幕會即時更新。</p>
+<div class="note">
+裝置未連接外部航班 API，會直接顯示您填寫的內容，因此可填入自己的航班、朋友的航班，甚至自訂一班「登機中」。
+</div>
+
+<div class="note">
+顯示語言一經更改即時套用：螢幕與控制台會同時切換為繁體中文、简体中文或 English。
+</div>
+
+<div class="page-break"></div>
+
+<h2 id="背景圖片--wi-fi--登入設定">背景圖片 · Wi-Fi · 登入設定</h2>
+<h3 id="背景圖片">背景圖片</h3>
+<p>選擇一個 PNG 或 JPEG，以「水平位置／垂直位置」滑桿移動裁切範圍，然後按 <b>「上載背景圖片」</b>。裝置會自動裁切為 320×212，預覽即為實際效果。</p>
+<h3 id="wi-fi-設定可選">Wi-Fi 設定（可選）</h3>
+<p>可讓水牌連接您的 Wi-Fi（僅支援 <b>2.4GHz</b>）。設定後螢幕會顯示 <code>STA</code> 與 IP，您可直接以該 IP 開啟控制台。</p>
+<ul>
+<li>密碼留空＝不變更現有網絡。</li>
+<li>勾選「清除已儲存 Wi-Fi」＝回復僅熱點模式。</li>
+<li>即使不連接 Wi-Fi，水牌仍可正常運作。</li>
+</ul>
+<h3 id="登入設定">登入設定</h3>
+<p>可更改控制台帳號與密碼（最少 8 個字元）。儲存後請以新帳號重新登入。</p>
+<img src="assets/console-flights-panel.png" alt="手機上的控制台" style="width:48mm; display:block; margin:1.6mm auto 1mm; border:1px solid #d8dee7; border-radius:1.5mm;">
+
+<p style="text-align:center; font-size:6.8pt; color:#6b7583; margin:0;">手機或電腦上的控制台（航班資料頁）</p>
+
+<div class="page-break"></div>
+
+<h2 id="維護與復原">維護與復原</h2>
+<div class="button-figure">
+  <img class="button-shot" src="assets/board-buttons.jpg" alt="機側按鈕位置：RST、BOOT 與電源開關">
+  <div class="callout-board">
+    <div class="callout"><span class="bubble dot-rst">1</span><span class="callout-text"><b>RST</b>：按一下重新啟動（不會清除設定）</span></div>
+    <div class="callout"><span class="bubble dot-boot">2</span><span class="callout-text"><b>BOOT</b>：按住約 5 秒＝原廠重設</span></div>
+    <div class="callout"><span class="bubble dot-pwr">3</span><span class="callout-text">電源開關（機側最底，近 USB-C）：ON／OFF</span></div>
+  </div>
+</div>
+
+<h3 id="恢復原廠設定">恢復原廠設定</h3>
+<p>按住機側 <b>BOOT</b> 約 <b>5 秒</b>（螢幕底部會顯示 BOOT 提示），放開後裝置會重新啟動。航班資料、Wi-Fi、背景圖片與登入帳號將全部清除，並回復出廠示範資料。</p>
+<h3 id="下載模式維修重新刷機用">下載模式（維修／重新刷機用）</h3>
+<p>按住 <b>BOOT</b>，按一下 <b>RST</b>，然後放開 BOOT，裝置便會進入下載模式。</p>
+<h3 id="ota-韌體更新進階">OTA 韌體更新（進階）</h3>
+<p>先短按並放開 BOOT 以完成授權（授權有效期 120 秒），然後在「維護工具」上載同型號的 <code>.bin</code> 檔案。</p>
+<div class="warn">
+<b>警告：</b>上載錯誤檔案會導致水牌無法開機。如不清楚操作內容，請勿自行更新，並於市集現場尋求協助。
+</div>
+
+<p>如需使用電腦重新刷機，請參閱封底的 flash station 網址與 QR code。</p>
+
+<div class="page-break"></div>
+
+<h2 id="常見問題">常見問題</h2>
+<dl class="qa">
+  <dt>無法連接 AirportDisplay-XXXX？</dt>
+  <dd>請靠近水牌，確認手機使用 2.4GHz、關閉 VPN，然後重新開機再試一次。</dd>
+  <dt>忘記控制台密碼？</dt>
+  <dd>請查看螢幕底部的 MAC 後 6 位，密碼即為 <code>HK-</code> 加上這 6 位。如曾更改而忘記，請執行一次原廠重設。</dd>
+  <dt>輸入 192.168.4.1 沒有反應？</dt>
+  <dd>請確認手機仍連接水牌的熱點，不要切換至流動數據。</dd>
+  <dt>修改設定後螢幕沒有變化？</dt>
+  <dd>請按「儲存航班設定」；背景圖片需等待上載完成後才會套用。</dd>
+  <dt>上載背景圖片失敗？</dt>
+  <dd>僅支援 PNG 或 JPEG。裝置會自動裁切為 320×212，建議使用橫向構圖。</dd>
+  <dt>螢幕沒有畫面？</dt>
+  <dd>請檢查電源開關與 USB-C 線，並重新開機一次；若仍未顯示，則需要維修。</dd>
+  <dt>中文無法顯示？</dt>
+  <dd>內建繁體與簡體中文字型。若個別字元顯示為方格，請改用其他語言或常見字詞。</dd>
+  <dt>可以用 5GHz Wi-Fi 嗎？</dt>
+  <dd>不可以。水牌只支援 2.4GHz；路由器同時廣播兩個頻段時，請選擇 2.4GHz 的那一個。</dd>
+</dl>
+
+<div class="page-break"></div>
+
+<h2 id="規格">規格</h2>
+<table class="spec-table">
+  <tr><td>螢幕</td><td>3.16 吋 LCD，320 × 820 直向，550 cd/m²</td></tr>
+  <tr><td>處理器</td><td>ESP32-S3R8（雙核心，240MHz）</td></tr>
+  <tr><td>記憶體</td><td>16MB Flash ／ 8MB PSRAM</td></tr>
+  <tr><td>無線</td><td>Wi-Fi 2.4GHz（802.11 b/g/n）、藍牙 5 LE</td></tr>
+  <tr><td>供電</td><td>USB-C 5V（不含火牛）</td></tr>
+  <tr><td>背景圖</td><td>PNG／JPEG，自動裁成 320 × 212</td></tr>
+  <tr><td>語言／韌體</td><td>繁中、簡中、English ／ 1.1.2（2026-09）</td></tr>
+</table>
+
+<h2 id="支援">支援</h2>
+<div class="support">
+  <div class="support-text">
+    <p>如有任何問題，歡迎於市集現場洽詢，或掃描 QR code 開啟重新刷機（USB）網頁。</p>
+    <p class="link-text"><a href="https://github.com/wedsamuel1230/airport-sign-flash-station">github.com/wedsamuel1230/airport-sign-flash-station</a></p>
+    <p>重新刷機需要 Chrome 或 Edge，以及一條可傳輸資料的 USB-C 線。</p>
+  </div>
+  <img class="qr" src="assets/qr-flash-station.png" alt="重新刷機網頁 QR code">
+</div>
+
+<div class="note">
+請勿自行拆開外殼；避免高溫、潮濕與陽光直射。只建議使用 5V USB 電源。
+</div>
+  </article>
+
+  <article id="en">
+    <h1 class="title" style="font-size:1.6rem;margin-bottom:1rem">English</h1>
+    <div class="page-break"></div>
+
+<h2 id="quick-start-four-steps">Quick start: four steps</h2>
+<ol class="steps">
+  <li data-n="1"><span class="step-title">Power on</span>Connect USB-C 5V power and switch the unit on. The screen stays dark briefly, then shows the demo flight.</li>
+  <li data-n="2"><span class="step-title">Read the screen footer</span>Note the six characters after <b>MAC</b>; every password is <b>HK-</b> plus those six.</li>
+  <li data-n="3"><span class="step-title">Join the device hotspot</span>On your phone, join <code>AirportDisplay-XXXX</code> (the last four MAC characters) with the password <code>HK-XXXXXX</code>.</li>
+  <li data-n="4"><span class="step-title">Open the console</span>Open <code>http://192.168.4.1/</code> in a browser and sign in as <code>admin</code> with <code>HK-XXXXXX</code>.</li>
+</ol>
+
+<div class="warn">
+<b>The display runs its own Wi-Fi hotspot</b>, so no internet is needed for setup. A browser warning that the page is "Not secure" is expected: it is served locally over HTTP.
+</div>
+
+<div class="note">
+Setup is a one-off. Later starts reuse the saved flight data and background image, and work with no network.
+</div>
+
+<div class="page-break"></div>
+
+<h2 id="what-the-screen-shows">What the screen shows</h2>
+<div class="screen-figure">
+  <div class="screen-shot-wrap">
+    <img class="screen-shot" src="assets/device-screen.png" alt="Display panel">
+    <span class="dot" style="top:4.3%;">1</span>
+    <span class="dot dot-r" style="top:4.3%;">2</span>
+    <span class="dot" style="top:11.2%;">3</span>
+    <span class="dot" style="top:23.5%;">4</span>
+    <span class="dot" style="top:33.6%;">5</span>
+    <span class="dot" style="top:46.6%;">6</span>
+    <span class="dot" style="top:88.1%;">7</span>
+  </div>
+  <div class="callout-board">
+    <div class="callout-row half-split" style="top:3.3mm;">
+      <div class="callout"><span class="bubble">1</span><span class="callout-text">Flight number (e.g. CX 548)</span></div>
+      <div class="callout"><span class="bubble">2</span><span class="callout-text">Departure time (24-hour clock)</span></div>
+    </div>
+    <div class="callout-row" style="top:8.6mm;">
+      <div class="callout"><span class="bubble">3</span><span class="callout-text">Codeshare flight (optional)</span></div>
+    </div>
+    <div class="callout-row" style="top:18.1mm;">
+      <div class="callout"><span class="bubble">4</span><span class="callout-text">Departure airport</span></div>
+    </div>
+    <div class="callout-row" style="top:25.8mm;">
+      <div class="callout"><span class="bubble">5</span><span class="callout-text">Destination (large, yellow)</span></div>
+    </div>
+    <div class="callout-row" style="top:35.8mm;">
+      <div class="callout"><span class="bubble">6</span><span class="callout-text">Boarding status (e.g. Boarding)</span></div>
+    </div>
+    <div class="callout-row" style="top:67.7mm;">
+      <div class="callout"><span class="bubble">7</span><span class="callout-text">System band: <b>MAC</b>, network state and BOOT hint</span></div>
+    </div>
+  </div>
+</div>
+
+<h3 id="reading-the-system-band">Reading the system band</h3>
+<ul>
+<li><code>AP</code>: the display is broadcasting its own hotspot and waiting to be configured.</li>
+<li><code>STA 192.168.x.x</code>: the display has joined your Wi-Fi and shows its IP address.</li>
+<li>The artwork in the middle is the replaceable background image; the factory default is shown.</li>
+</ul>
+<div class="note">
+Before any change, the display shows the built-in demo record: CX 548 · 08:55 · JL 7030 · Hong Kong → Tokyo Haneda · Boarding.
+</div>
+
+<div class="page-break"></div>
+
+<h2 id="console-flight-data">Console: flight data</h2>
+<p>After signing in, the console has five areas: <b>flight data</b>, <b>Wi-Fi settings</b>, <b>background image</b>, <b>OTA / maintenance</b> and <b>login settings</b>.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>What to enter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flight number</td>
+<td>e.g. CX 548</td>
+</tr>
+<tr>
+<td>Codeshare</td>
+<td>e.g. JL 7030, leave blank if none</td>
+</tr>
+<tr>
+<td>Departure</td>
+<td>English, Traditional and Simplified Chinese</td>
+</tr>
+<tr>
+<td>Destination</td>
+<td>English, Traditional and Simplified Chinese</td>
+</tr>
+<tr>
+<td>Departure time</td>
+<td>24-hour clock, e.g. 08:55</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>e.g. Boarding / 登機中</td>
+</tr>
+<tr>
+<td>Display language</td>
+<td>Traditional Chinese, Simplified Chinese or English; applies immediately</td>
+</tr>
+</tbody>
+</table>
+<p>Press <b>"Save flight settings"</b> after editing; the screen updates immediately.</p>
+<div class="note">
+The display has no external flight API, so it shows exactly what you enter: your own flight, a friend's, or an invented boarding flight. Changing the display language applies at once to the screen and the console.
+</div>
+
+<div class="page-break"></div>
+
+<h2 id="background-image--wi-fi--login-settings">Background image · Wi-Fi · Login settings</h2>
+<h3 id="background-image">Background image</h3>
+<p>Choose a PNG or JPEG, set the crop with the horizontal and vertical sliders, then press <b>"Upload background image"</b>. The device crops it to 320×212; the preview matches the result.</p>
+<h3 id="wi-fi-settings-optional">Wi-Fi settings (optional)</h3>
+<p>The display can join your Wi-Fi network (2.4GHz only). The screen then shows <code>STA</code> and an IP you can use to open the console.</p>
+<ul>
+<li>A blank password keeps the current network.</li>
+<li>Tick "Clear saved Wi-Fi" to return to hotspot-only mode.</li>
+<li>The display works normally without any Wi-Fi connection.</li>
+</ul>
+<h3 id="login-settings">Login settings</h3>
+<p>Change the console account and password (at least 8 characters). After saving, sign in again with the new account.</p>
+<img src="assets/console-flights-panel.png" alt="Console on a phone" style="width:42mm; display:block; margin:1.4mm auto 1mm; border:1px solid #d8dee7; border-radius:1.5mm;">
+
+<p style="text-align:center; font-size:6.6pt; color:#6b7583; margin:0;">Console on a phone (flight data page)</p>
+
+<div class="page-break"></div>
+
+<h2 id="maintenance-and-recovery">Maintenance and recovery</h2>
+<div class="button-figure">
+  <img class="button-shot" src="assets/board-buttons.jpg" alt="Side buttons: RST, BOOT and the power switch">
+  <div class="callout-board">
+    <div class="callout"><span class="bubble dot-rst">1</span><span class="callout-text"><b>RST</b>: press to restart (keeps your settings)</span></div>
+    <div class="callout"><span class="bubble dot-boot">2</span><span class="callout-text"><b>BOOT</b>: hold about 5 s = factory reset</span></div>
+    <div class="callout"><span class="bubble dot-pwr">3</span><span class="callout-text">Power switch (lowest on the side, by the USB-C): ON/OFF</span></div>
+  </div>
+</div>
+
+<h3 id="factory-reset">Factory reset</h3>
+<p>Hold <b>BOOT</b> for about <b>5 seconds</b> (the screen footer shows the hint), then release. The display restarts and clears flight data, Wi-Fi, the background image and the console account.</p>
+<h3 id="download-mode-service-and-re-flashing">Download mode (service and re-flashing)</h3>
+<p>Hold <b>BOOT</b>, tap <b>RST</b>, then release BOOT. The display enters download mode.</p>
+<h3 id="ota-firmware-update-advanced">OTA firmware update (advanced)</h3>
+<p>Press and release BOOT to authorise an update (valid for 120 seconds), then upload a <code>.bin</code> file for this product under "Maintenance tools".</p>
+<div class="warn">
+<b>Warning:</b> uploading the wrong file can leave the display unable to boot. If you are unsure, do not update it yourself; ask us at the market.
+</div>
+
+<p>To re-flash from a computer, see the flash station address and QR code on the back page.</p>
+
+<div class="page-break"></div>
+
+<h2 id="frequently-asked-questions">Frequently asked questions</h2>
+<dl class="qa">
+  <dt>Cannot find AirportDisplay-XXXX?</dt>
+  <dd>Move closer, check the phone is on 2.4GHz, turn off any VPN, then power-cycle and retry.</dd>
+  <dt>I forgot the console password.</dt>
+  <dd>Read the six characters after MAC at the bottom of the screen: the password is <code>HK-</code> plus those six. If you changed it and forgot, run a factory reset.</dd>
+  <dt>192.168.4.1 does not respond.</dt>
+  <dd>Check that the phone is still connected to the display's hotspot rather than mobile data.</dd>
+  <dt>Nothing changes after I edit the settings.</dt>
+  <dd>Press "Save flight settings". A background image is applied only after the upload finishes.</dd>
+  <dt>The background upload fails.</dt>
+  <dd>Only PNG and JPEG are supported; the device crops to 320×212, so use a landscape picture.</dd>
+  <dt>The screen is blank.</dt>
+  <dd>Check the power switch and USB-C cable, then restart. If it stays blank, the unit needs service.</dd>
+  <dt>Chinese characters do not appear.</dt>
+  <dd>Chinese fonts are built in. If a single character shows as a box, try another language or a simpler word.</dd>
+  <dt>Can it join a 5GHz network?</dt>
+  <dd>No. The display only supports 2.4GHz. If your router broadcasts both bands, pick the 2.4GHz SSID.</dd>
+</dl>
+
+<div class="page-break"></div>
+
+<h2 id="specifications">Specifications</h2>
+<table class="spec-table">
+  <tr><td>Display</td><td>3.16-inch LCD, 320 × 820 portrait, 550 cd/m²</td></tr>
+  <tr><td>Processor</td><td>ESP32-S3R8 (dual core, 240MHz)</td></tr>
+  <tr><td>Memory</td><td>16MB flash / 8MB PSRAM</td></tr>
+  <tr><td>Wireless</td><td>Wi-Fi 2.4GHz (802.11 b/g/n), Bluetooth 5 LE</td></tr>
+  <tr><td>Power</td><td>USB-C 5V (power supply not included)</td></tr>
+  <tr><td>Background</td><td>PNG / JPEG, cropped to 320 × 212</td></tr>
+  <tr><td>Language / firmware</td><td>Traditional Chinese, Simplified Chinese, English / 1.1.2 (2026-09)</td></tr>
+</table>
+
+<h2 id="support">Support</h2>
+<div class="support">
+  <div class="support-text">
+    <p>If you have any questions, ask us at the market, or scan the QR code to open the USB re-flash page.</p>
+    <p class="link-text"><a href="https://github.com/wedsamuel1230/airport-sign-flash-station">github.com/wedsamuel1230/airport-sign-flash-station</a></p>
+    <p>Re-flashing needs Chrome or Edge and a USB-C cable that carries data.</p>
+  </div>
+  <img class="qr" src="assets/qr-flash-station.png" alt="Re-flash page QR code">
+</div>
+
+<div class="note">
+Do not open the enclosure. Keep the unit away from heat, moisture and direct sunlight. Use a 5V USB power source.
+</div>
+  </article>
+  <footer>
+    香港機場水牌 · ESP32-S3 · 韌體 1.1.2 · 重新刷機網頁：
+    <a href="https://wedsamuel1230.github.io/airport-sign-flash-station/">airport-sign-flash-station</a>
+  </footer>
+</div>
+</body>
+</html>
