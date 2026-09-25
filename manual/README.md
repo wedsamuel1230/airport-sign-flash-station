@@ -6,6 +6,13 @@ One PDF, two A4 sheets.
 網上版 / Online edition: <https://wedsamuel1230.github.io/airport-sign-flash-station/manual/>
 （同一份內容，連「規格」同 Wi-Fi／背景圖片設定，另加機側按鈕位置圖）
 
+| 頁面 | 內容 |
+|---|---|
+| [`/manual/`](https://wedsamuel1230.github.io/airport-sign-flash-station/manual/) | 中文說明（附目錄、搜尋、深色模式） |
+| [`/manual/en/`](https://wedsamuel1230.github.io/airport-sign-flash-station/manual/en/) | English manual |
+| [`/manual/legal/`](https://wedsamuel1230.github.io/airport-sign-flash-station/manual/legal/) | 法律聲明 · 私隱 · Cookie · 第三方元件 · 無障礙 |
+| [`/manual/en/legal/`](https://wedsamuel1230.github.io/airport-sign-flash-station/manual/en/legal/) | Legal · privacy · cookies (English) |
+
 ## 中文
 
 * 一張 A4 摺三次 → 成品 105 × 74.25mm，放得入 **130 × 90mm** 的盒。
